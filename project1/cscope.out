@@ -1,0 +1,4070 @@
+cscope 15 $HOME/Documents/junior_year/ucd/ucd_game_development/project1               0000020587
+	@/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/Controller.java
+
+1 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gev’t
+.
+	gKeyEv’t
+;
+
+2 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gev’t
+.
+	gKeyLi¡’”
+;
+
+3 
+impÜt
+ 
+	gjava
+.
+	gut
+.
+	gA¼ayLi¡
+;
+
+4 
+impÜt
+ 
+	gjava
+.
+	gut
+.
+	gHashM­
+;
+
+32 
+public
+ cÏs 
+	cCÚŒŞËr
+ 
+im¶em’ts
+ 
+	mKeyLi¡’”
+ {
+
+34 
+´iv©e
+ 
+boŞ—n
+ 
+	mKeyAP»s£d
+ğ
+çl£
+;
+
+35 
+´iv©e
+ 
+boŞ—n
+ 
+	mKeySP»s£d
+ğ
+çl£
+;
+
+36 
+´iv©e
+ 
+boŞ—n
+ 
+	mKeyDP»s£d
+ğ
+çl£
+;
+
+37 
+´iv©e
+ 
+boŞ—n
+ 
+	mKeyWP»s£d
+ğ
+çl£
+;
+
+38 
+´iv©e
+ 
+boŞ—n
+ 
+	mKeyS·ûP»s£d
+ğ
+çl£
+;
+
+40 
+´iv©e
+ 
+fš®
+ 
+CÚŒŞËr
+ 
+	mš¡ªû
+ = 
+Ãw
+ Controller();
+
+42 
+public
+ 
+	$CÚŒŞËr
+() {
+
+45 
+public
+ 
+CÚŒŞËr
+ 
+	$g‘In¡ªû
+(){
+
+46  
+š¡ªû
+;
+
+47 
+	}
+}
+
+49 @
+Ov”ride
+
+
+51 
+public
+ 
+	$keyTy³d
+(
+KeyEv’t
+ 
+e
+) {
+
+53 
+	}
+}
+
+55 @
+Ov”ride
+
+
+56 
+public
+ 
+	$keyP»s£d
+(
+KeyEv’t
+ 
+e
+)
+
+58 
+e
+.
+	`g‘KeyCh¬
+())
+
+60 'a':
+	`£tKeyAP»s£d
+(
+Œue
+);;
+
+61 's':
+	`£tKeySP»s£d
+(
+Œue
+);;
+
+62 'w':
+	`£tKeyWP»s£d
+(
+Œue
+);;
+
+63 'd':
+	`£tKeyDP»s£d
+(
+Œue
+);;
+
+64 ' ':
+	`£tKeyS·ûP»s£d
+(
+Œue
+);;
+
+72 
+	}
+}
+
+74 @
+Ov”ride
+
+
+75 
+public
+ 
+	$keyR–—£d
+(
+KeyEv’t
+ 
+e
+)
+
+77 
+e
+.
+	`g‘KeyCh¬
+())
+
+79 'a':
+	`£tKeyAP»s£d
+(
+çl£
+);;
+
+80 's':
+	`£tKeySP»s£d
+(
+çl£
+);;
+
+81 'w':
+	`£tKeyWP»s£d
+(
+çl£
+);;
+
+82 'd':
+	`£tKeyDP»s£d
+(
+çl£
+);;
+
+83 ' ':
+	`£tKeyS·ûP»s£d
+(
+çl£
+);;
+
+90 
+	}
+}
+
+93 
+public
+ 
+boŞ—n
+ 
+	$isKeyAP»s£d
+() {
+
+94  
+KeyAP»s£d
+;
+
+95 
+	}
+}
+
+98 
+public
+ 
+	$£tKeyAP»s£d
+(
+boŞ—n
+ 
+keyAP»s£d
+) {
+
+99 
+KeyAP»s£d
+ = 
+keyAP»s£d
+;
+
+100 
+	}
+}
+
+103 
+public
+ 
+boŞ—n
+ 
+	$isKeySP»s£d
+() {
+
+104  
+KeySP»s£d
+;
+
+105 
+	}
+}
+
+108 
+public
+ 
+	$£tKeySP»s£d
+(
+boŞ—n
+ 
+keySP»s£d
+) {
+
+109 
+KeySP»s£d
+ = 
+keySP»s£d
+;
+
+110 
+	}
+}
+
+113 
+public
+ 
+boŞ—n
+ 
+	$isKeyDP»s£d
+() {
+
+114  
+KeyDP»s£d
+;
+
+115 
+	}
+}
+
+118 
+public
+ 
+	$£tKeyDP»s£d
+(
+boŞ—n
+ 
+keyDP»s£d
+) {
+
+119 
+KeyDP»s£d
+ = 
+keyDP»s£d
+;
+
+120 
+	}
+}
+
+123 
+public
+ 
+boŞ—n
+ 
+	$isKeyWP»s£d
+() {
+
+124  
+KeyWP»s£d
+;
+
+125 
+	}
+}
+
+128 
+public
+ 
+	$£tKeyWP»s£d
+(
+boŞ—n
+ 
+keyWP»s£d
+) {
+
+129 
+KeyWP»s£d
+ = 
+keyWP»s£d
+;
+
+130 
+	}
+}
+
+133 
+public
+ 
+boŞ—n
+ 
+	$isKeyS·ûP»s£d
+() {
+
+134  
+KeyS·ûP»s£d
+;
+
+135 
+	}
+}
+
+138 
+public
+ 
+	$£tKeyS·ûP»s£d
+(
+boŞ—n
+ 
+keyS·ûP»s£d
+) {
+
+139 
+KeyS·ûP»s£d
+ = 
+keyS·ûP»s£d
+;
+
+140 
+	}
+}
+
+	@/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/src/Controller.java
+
+1 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gev’t
+.
+	gKeyEv’t
+;
+
+2 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gev’t
+.
+	gKeyLi¡’”
+;
+
+3 
+impÜt
+ 
+	gjava
+.
+	gut
+.
+	gA¼ayLi¡
+;
+
+4 
+impÜt
+ 
+	gjava
+.
+	gut
+.
+	gHashM­
+;
+
+32 
+public
+ cÏs 
+	cCÚŒŞËr
+ 
+im¶em’ts
+ 
+	mKeyLi¡’”
+ {
+
+34 
+´iv©e
+ 
+boŞ—n
+ 
+	mKeyAP»s£d
+ğ
+çl£
+;
+
+35 
+´iv©e
+ 
+boŞ—n
+ 
+	mKeySP»s£d
+ğ
+çl£
+;
+
+36 
+´iv©e
+ 
+boŞ—n
+ 
+	mKeyDP»s£d
+ğ
+çl£
+;
+
+37 
+´iv©e
+ 
+boŞ—n
+ 
+	mKeyWP»s£d
+ğ
+çl£
+;
+
+38 
+´iv©e
+ 
+boŞ—n
+ 
+	mKeyS·ûP»s£d
+ğ
+çl£
+;
+
+40 
+´iv©e
+ 
+fš®
+ 
+CÚŒŞËr
+ 
+	mš¡ªû
+ = 
+Ãw
+ Controller();
+
+42 
+public
+ 
+	$CÚŒŞËr
+() {
+
+45 
+public
+ 
+CÚŒŞËr
+ 
+	$g‘In¡ªû
+(){
+
+46  
+š¡ªû
+;
+
+47 
+	}
+}
+
+49 @
+Ov”ride
+
+
+51 
+public
+ 
+	$keyTy³d
+(
+KeyEv’t
+ 
+e
+) {
+
+53 
+	}
+}
+
+55 @
+Ov”ride
+
+
+56 
+public
+ 
+	$keyP»s£d
+(
+KeyEv’t
+ 
+e
+)
+
+58 
+e
+.
+	`g‘KeyCh¬
+())
+
+60 'a':
+	`£tKeyAP»s£d
+(
+Œue
+);;
+
+61 's':
+	`£tKeySP»s£d
+(
+Œue
+);;
+
+62 'w':
+	`£tKeyWP»s£d
+(
+Œue
+);;
+
+63 'd':
+	`£tKeyDP»s£d
+(
+Œue
+);;
+
+64 ' ':
+	`£tKeyS·ûP»s£d
+(
+Œue
+);;
+
+72 
+	}
+}
+
+74 @
+Ov”ride
+
+
+75 
+public
+ 
+	$keyR–—£d
+(
+KeyEv’t
+ 
+e
+)
+
+77 
+e
+.
+	`g‘KeyCh¬
+())
+
+79 'a':
+	`£tKeyAP»s£d
+(
+çl£
+);;
+
+80 's':
+	`£tKeySP»s£d
+(
+çl£
+);;
+
+81 'w':
+	`£tKeyWP»s£d
+(
+çl£
+);;
+
+82 'd':
+	`£tKeyDP»s£d
+(
+çl£
+);;
+
+83 ' ':
+	`£tKeyS·ûP»s£d
+(
+çl£
+);;
+
+90 
+	}
+}
+
+93 
+public
+ 
+boŞ—n
+ 
+	$isKeyAP»s£d
+() {
+
+94  
+KeyAP»s£d
+;
+
+95 
+	}
+}
+
+98 
+public
+ 
+	$£tKeyAP»s£d
+(
+boŞ—n
+ 
+keyAP»s£d
+) {
+
+99 
+KeyAP»s£d
+ = 
+keyAP»s£d
+;
+
+100 
+	}
+}
+
+103 
+public
+ 
+boŞ—n
+ 
+	$isKeySP»s£d
+() {
+
+104  
+KeySP»s£d
+;
+
+105 
+	}
+}
+
+108 
+public
+ 
+	$£tKeySP»s£d
+(
+boŞ—n
+ 
+keySP»s£d
+) {
+
+109 
+KeySP»s£d
+ = 
+keySP»s£d
+;
+
+110 
+	}
+}
+
+113 
+public
+ 
+boŞ—n
+ 
+	$isKeyDP»s£d
+() {
+
+114  
+KeyDP»s£d
+;
+
+115 
+	}
+}
+
+118 
+public
+ 
+	$£tKeyDP»s£d
+(
+boŞ—n
+ 
+keyDP»s£d
+) {
+
+119 
+KeyDP»s£d
+ = 
+keyDP»s£d
+;
+
+120 
+	}
+}
+
+123 
+public
+ 
+boŞ—n
+ 
+	$isKeyWP»s£d
+() {
+
+124  
+KeyWP»s£d
+;
+
+125 
+	}
+}
+
+128 
+public
+ 
+	$£tKeyWP»s£d
+(
+boŞ—n
+ 
+keyWP»s£d
+) {
+
+129 
+KeyWP»s£d
+ = 
+keyWP»s£d
+;
+
+130 
+	}
+}
+
+133 
+public
+ 
+boŞ—n
+ 
+	$isKeyS·ûP»s£d
+() {
+
+134  
+KeyS·ûP»s£d
+;
+
+135 
+	}
+}
+
+138 
+public
+ 
+	$£tKeyS·ûP»s£d
+(
+boŞ—n
+ 
+keyS·ûP»s£d
+) {
+
+139 
+KeyS·ûP»s£d
+ = 
+keyS·ûP»s£d
+;
+
+140 
+	}
+}
+
+	@/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/src/MainWindow.java
+
+1 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gBÜd”Layout
+;
+
+2 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gCŞÜ
+;
+
+3 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gImage
+;
+
+4 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gev’t
+.
+	gAùiÚEv’t
+;
+
+5 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gev’t
+.
+	gAùiÚLi¡’”
+;
+
+6 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gev’t
+.
+	gKeyLi¡’”
+;
+
+7 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gimage
+.
+	gBufã»dImage
+;
+
+8 
+impÜt
+ 
+	gjava
+.
+	gio
+.
+	gFe
+;
+
+9 
+impÜt
+ 
+	gjava
+.
+	gio
+.
+	gIOExû±iÚ
+;
+
+11 
+impÜt
+ 
+	gjavax
+.
+	gimageio
+.
+	gImageIO
+;
+
+12 
+impÜt
+ 
+	gjavax
+.
+	gswšg
+.
+	gImageIcÚ
+;
+
+13 
+impÜt
+ 
+	gjavax
+.
+	gswšg
+.
+	gJBu‰Ú
+;
+
+14 
+impÜt
+ 
+	gjavax
+.
+	gswšg
+.
+	gJF¿me
+;
+
+15 
+impÜt
+ 
+	gjavax
+.
+	gswšg
+.
+	gJLab–
+;
+
+16 
+impÜt
+ 
+	gjavax
+.
+	gswšg
+.
+	gJPª–
+;
+
+18 
+impÜt
+ 
+	gut
+.
+	gUn™Te¡s
+;
+
+47 
+public
+ cÏs 
+	cMašWšdow
+ {
+
+48 
+´iv©e
+ 
+JF¿me
+ 
+	mäame
+ = 
+Ãw
+ JFrame("Game");
+
+49 
+´iv©e
+ 
+Mod–
+ 
+	mgamewÜld
+ğ
+Ãw
+ Model();
+
+50 
+´iv©e
+ 
+V›w”
+ 
+	mÿnvas
+ = 
+Ãw
+ V›w”Ğ
+gamewÜld
+);
+
+51 
+´iv©e
+ 
+KeyLi¡’”
+ 
+	mCÚŒŞËr
+ =
+Ãw
+ 
+CÚŒŞËr
+() ;
+
+52 
+´iv©e
+ 
+	mT¬g‘FPS
+ = 100;
+
+53 
+´iv©e
+ 
+boŞ—n
+ 
+	m¡¬tGame
+ğ
+çl£
+;
+
+54 
+´iv©e
+ 
+JLab–
+ 
+	mBackgroundImageFÜS¹M’u
+ ;
+
+56 
+public
+ 
+	$MašWšdow
+() {
+
+57 
+äame
+.
+	`£tSize
+(1000, 1000);
+
+58 
+äame
+.
+	`£tDeçuÉClo£O³¿tiÚ
+(
+JF¿me
+.
+EXIT_ON_CLOSE
+);
+
+59 
+äame
+.
+	`£tLayout
+(
+nuÎ
+);
+
+60 
+äame
+.
+	`add
+(
+ÿnvas
+);
+
+61 
+ÿnvas
+.
+	`£tBounds
+(0, 0, 1000, 1000);
+
+62 
+ÿnvas
+.
+	`£tBackground
+(
+Ãw
+ 
+	`CŞÜ
+(255,255,255));
+
+63 
+ÿnvas
+.
+	`£tVisibË
+(
+çl£
+);
+
+66 
+JBu‰Ú
+ 
+¡¬tM’uBu‰Ú
+ = 
+Ãw
+ 
+	`JBu‰Ú
+("Start Game");
+
+67 
+¡¬tM’uBu‰Ú
+.
+	`addAùiÚLi¡’”
+(
+Ãw
+ 
+	`AùiÚLi¡’”
+()
+
+69 @
+Ov”ride
+
+
+70 
+public
+ 
+	`aùiÚP”fÜmed
+(
+AùiÚEv’t
+ 
+e
+) {
+
+71 
+¡¬tM’uBu‰Ú
+.
+	`£tVisibË
+(
+çl£
+);
+
+72 
+BackgroundImageFÜS¹M’u
+.
+	`£tVisibË
+(
+çl£
+);
+
+73 
+ÿnvas
+.
+	`£tVisibË
+(
+Œue
+);
+
+74 
+ÿnvas
+.
+	`addKeyLi¡’”
+(
+CÚŒŞËr
+);
+
+75 
+ÿnvas
+.
+	`»que¡FocusInWšdow
+();
+
+76 
+¡¬tGame
+=
+Œue
+;
+
+78 
+¡¬tM’uBu‰Ú
+.
+	`£tBounds
+(400, 500, 200, 40);
+
+81 
+Fe
+ 
+BackroundToLßd
+ = 
+Ãw
+ 
+	`Fe
+("../res/startscreen.png");
+
+82 
+Œy
+ {
+
+84 
+Bufã»dImage
+ 
+myPiùu»
+ = 
+ImageIO
+.
+	`»ad
+(
+BackroundToLßd
+);
+
+85 
+BackgroundImageFÜS¹M’u
+ = 
+Ãw
+ 
+	`JLab–
+Òew 
+	`ImageIcÚ
+(
+myPiùu»
+));
+
+86 
+BackgroundImageFÜS¹M’u
+.
+	`£tBounds
+(0, 0, 1000, 1000);
+
+87 
+äame
+.
+	`add
+(
+BackgroundImageFÜS¹M’u
+);
+
+88 } 
+	`ÿtch
+ (
+IOExû±iÚ
+ 
+e
+) {
+
+89 
+e
+.
+	`´štSckT¿û
+();
+
+92 
+äame
+.
+	`add
+(
+¡¬tM’uBu‰Ú
+);
+
+93 
+äame
+.
+	`£tVisibË
+(
+Œue
+);
+
+96 
+public
+ 
+	$maš
+(
+SŒšg
+[] 
+¬gs
+) {
+
+97 
+MašWšdow
+ 
+h–lo
+ = 
+Ãw
+ 
+	`MašWšdow
+();
+
+98 
+Œue
+)
+
+102 
+TimeB‘w“nF¿mes
+ = 1000 / 
+T¬g‘FPS
+;
+
+103 
+F¿meCheck
+ = 
+Sy¡em
+.
+	`cu¼’tTimeMlis
+(è+ (è
+TimeB‘w“nF¿mes
+;
+
+106 
+F¿meCheck
+ > 
+Sy¡em
+.
+	`cu¼’tTimeMlis
+()){}
+
+109 if(
+¡¬tGame
+)
+
+111 
+	`gam–oİ
+();
+
+115 
+Un™Te¡s
+.
+	`CheckF¿meR©e
+(
+Sy¡em
+.
+	`cu¼’tTimeMlis
+(),
+F¿meCheck
+, 
+T¬g‘FPS
+);
+
+120 
+	}
+}
+
+122 
+´iv©e
+ 
+	$gam–oİ
+() {
+
+129 
+gamewÜld
+.
+	`gam–ogic
+();
+
+132 
+ÿnvas
+.
+	`upd©ev›w
+();
+
+136 
+äame
+.
+	`£tT™Ë
+("ScÜğ "+ 
+gamewÜld
+.
+	`g‘ScÜe
+());
+
+139 
+	}
+}
+
+	@/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/src/Model.java
+
+1 
+impÜt
+ 
+	gjava
+.
+	gut
+.
+	gA¼ayLi¡
+;
+
+2 
+impÜt
+ 
+	gjava
+.
+	gut
+.
+	gRªdom
+;
+
+3 
+impÜt
+ 
+	gjava
+.
+	gut
+.
+	gcÚcu¼’t
+.
+	gCİyOnWr™eA¼ayLi¡
+;
+
+5 
+impÜt
+ 
+	gut
+.
+	gGameObjeù
+;
+
+6 
+impÜt
+ 
+	gut
+.
+	gPošt3f
+;
+
+7 
+impÜt
+ 
+	gut
+.
+	gVeùÜ3f
+;
+
+32 
+public
+ cÏs 
+	cMod–
+ {
+
+34 
+´iv©e
+ 
+GameObjeù
+ 
+	mPÏy”
+;
+
+35 
+´iv©e
+ 
+CÚŒŞËr
+ 
+	mcÚŒŞËr
+ = CÚŒŞËr.
+g‘In¡ªû
+();
+
+36 
+´iv©e
+ 
+	mCİyOnWr™eA¼ayLi¡
+<
+	mGameObjeù
+> 
+	mEÃm›sLi¡
+ = 
+Ãw
+ 
+CİyOnWr™eA¼ayLi¡
+<
+GameObjeù
+>();
+
+37 
+´iv©e
+ 
+	mCİyOnWr™eA¼ayLi¡
+<
+	mGameObjeù
+> 
+	mBuÎ‘Li¡
+ = 
+Ãw
+ 
+CİyOnWr™eA¼ayLi¡
+<
+GameObjeù
+>();
+
+38 
+´iv©e
+ 
+	mScÜe
+=0;
+
+40 
+public
+ 
+	$Mod–
+() {
+
+43 
+PÏy”
+ğ
+Ãw
+ 
+	`GameObjeù
+("../»s/LighŠšg.²g",50,50,Ãw 
+	`Pošt3f
+(500,500,0));
+
+46 
+EÃm›sLi¡
+.
+	`add
+(
+Ãw
+ 
+	`GameObjeù
+("../»s/UFO.²g",50,50,Ãw 
+	`Pošt3f
+((()
+M©h
+.
+	`¿ndom
+()*50+400 ),0,0)));
+
+47 
+EÃm›sLi¡
+.
+	`add
+(
+Ãw
+ 
+	`GameObjeù
+("../»s/UFO.²g",50,50,Ãw 
+	`Pošt3f
+((()
+M©h
+.
+	`¿ndom
+()*50+500 ),0,0)));
+
+48 
+EÃm›sLi¡
+.
+	`add
+(
+Ãw
+ 
+	`GameObjeù
+("../»s/UFO.²g",50,50,Ãw 
+	`Pošt3f
+((()
+M©h
+.
+	`¿ndom
+()*100+500 ),0,0)));
+
+49 
+EÃm›sLi¡
+.
+	`add
+(
+Ãw
+ 
+	`GameObjeù
+("../»s/UFO.²g",50,50,Ãw 
+	`Pošt3f
+((()
+M©h
+.
+	`¿ndom
+()*100+400 ),0,0)));
+
+56 
+public
+ 
+	$gam–ogic
+()
+
+59 
+	`¶ay”Logic
+();
+
+61 
+	`’emyLogic
+();
+
+63 
+	`buÎ‘Logic
+();
+
+65 
+	`gameLogic
+();
+
+67 
+	}
+}
+
+69 
+´iv©e
+ 
+	$gameLogic
+() {
+
+77 
+GameObjeù
+ 
+‹mp
+ : 
+EÃm›sLi¡
+)
+
+79 
+GameObjeù
+ 
+BuÎ‘
+ : 
+BuÎ‘Li¡
+)
+
+81 iàĞ
+M©h
+.
+	`abs
+(
+‹mp
+.
+	`g‘C’Œe
+().
+	`g‘X
+()- 
+BuÎ‘
+.g‘C’Œe().g‘X())<emp.
+	`g‘Width
+()
+
+82 && 
+M©h
+.
+	`abs
+(
+‹mp
+.
+	`g‘C’Œe
+().
+	`g‘Y
+()- 
+BuÎ‘
+.g‘C’Œe().g‘Y()è<emp.
+	`g‘Height
+())
+
+84 
+EÃm›sLi¡
+.
+	`»move
+(
+‹mp
+);
+
+85 
+BuÎ‘Li¡
+.
+	`»move
+(
+BuÎ‘
+);
+
+86 
+ScÜe
+++;
+
+91 
+	}
+}
+
+93 
+´iv©e
+ 
+	$’emyLogic
+() {
+
+95 
+GameObjeù
+ 
+‹mp
+ : 
+EÃm›sLi¡
+)
+
+99 
+‹mp
+.
+	`g‘C’Œe
+().
+	`AµlyVeùÜ
+(
+Ãw
+ 
+	`VeùÜ3f
+(0,-1,0));
+
+103 ià(
+‹mp
+.
+	`g‘C’Œe
+().
+	`g‘Y
+()==900.0f)
+
+105 
+EÃm›sLi¡
+.
+	`»move
+(
+‹mp
+);
+
+108 
+ScÜe
+--;
+
+112 ià(
+EÃm›sLi¡
+.
+	`size
+()<2)
+
+114 
+EÃm›sLi¡
+.
+	`size
+()<6)
+
+116 
+EÃm›sLi¡
+.
+	`add
+(
+Ãw
+ 
+	`GameObjeù
+("»s/UFO.²g",50,50,Ãw 
+	`Pošt3f
+((()
+M©h
+.
+	`¿ndom
+()*1000),0,0)));
+
+119 
+	}
+}
+
+121 
+´iv©e
+ 
+	$buÎ‘Logic
+() {
+
+125 
+GameObjeù
+ 
+‹mp
+ : 
+BuÎ‘Li¡
+)
+
+129 
+‹mp
+.
+	`g‘C’Œe
+().
+	`AµlyVeùÜ
+(
+Ãw
+ 
+	`VeùÜ3f
+(0,1,0));
+
+133 ià(
+‹mp
+.
+	`g‘C’Œe
+().
+	`g‘Y
+()==0)
+
+135 
+BuÎ‘Li¡
+.
+	`»move
+(
+‹mp
+);
+
+139 
+	}
+}
+
+141 
+´iv©e
+ 
+	$¶ay”Logic
+() {
+
+147 if(
+CÚŒŞËr
+.
+	`g‘In¡ªû
+().
+	`isKeyAP»s£d
+()){
+PÏy”
+.
+	`g‘C’Œe
+().
+	`AµlyVeùÜ
+Ğ
+Ãw
+ 
+	`VeùÜ3f
+(-2,0,0)); }
+
+149 if(
+CÚŒŞËr
+.
+	`g‘In¡ªû
+().
+	`isKeyDP»s£d
+())
+
+151 
+PÏy”
+.
+	`g‘C’Œe
+().
+	`AµlyVeùÜ
+Ğ
+Ãw
+ 
+	`VeùÜ3f
+(2,0,0));
+
+154 if(
+CÚŒŞËr
+.
+	`g‘In¡ªû
+().
+	`isKeyWP»s£d
+())
+
+156 
+PÏy”
+.
+	`g‘C’Œe
+().
+	`AµlyVeùÜ
+Ğ
+Ãw
+ 
+	`VeùÜ3f
+(0,2,0));
+
+159 if(
+CÚŒŞËr
+.
+	`g‘In¡ªû
+().
+	`isKeySP»s£d
+()){
+PÏy”
+.
+	`g‘C’Œe
+().
+	`AµlyVeùÜ
+Ğ
+Ãw
+ 
+	`VeùÜ3f
+(0,-2,0));}
+
+161 if(
+CÚŒŞËr
+.
+	`g‘In¡ªû
+().
+	`isKeyS·ûP»s£d
+())
+
+163 
+	`C»©eBuÎ‘
+();
+
+164 
+CÚŒŞËr
+.
+	`g‘In¡ªû
+().
+	`£tKeyS·ûP»s£d
+(
+çl£
+);
+
+167 
+	}
+}
+
+169 
+´iv©e
+ 
+	$C»©eBuÎ‘
+() {
+
+170 
+BuÎ‘Li¡
+.
+	`add
+(
+Ãw
+ 
+	`GameObjeù
+("»s/BuÎ‘.²g",32,64,Ãw 
+	`Pošt3f
+(
+PÏy”
+.
+	`g‘C’Œe
+().
+	`g‘X
+(),PÏy”.g‘C’Œe().
+	`g‘Y
+(),0.0f)));
+
+172 
+	}
+}
+
+174 
+public
+ 
+GameObjeù
+ 
+	$g‘PÏy”
+() {
+
+175  
+PÏy”
+;
+
+176 
+	}
+}
+
+178 
+public
+ 
+	gCİyOnWr™eA¼ayLi¡
+<
+	gGameObjeù
+> 
+	$g‘EÃm›s
+() {
+
+179  
+EÃm›sLi¡
+;
+
+180 
+	}
+}
+
+182 
+public
+ 
+	gCİyOnWr™eA¼ayLi¡
+<
+	gGameObjeù
+> 
+	$g‘BuÎ‘s
+() {
+
+183  
+BuÎ‘Li¡
+;
+
+184 
+	}
+}
+
+186 
+public
+ 
+	$g‘ScÜe
+() {
+
+187  
+ScÜe
+;
+
+188 
+	}
+}
+
+	@/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/src/Viewer.java
+
+1 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gCŞÜ
+;
+
+2 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gG¿phics
+;
+
+3 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gG¿phics2D
+;
+
+4 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gImage
+;
+
+5 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gLayoutMªag”
+;
+
+6 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gReùªgË
+;
+
+7 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gTextu»Pašt
+;
+
+8 
+impÜt
+ 
+	gjava
+.
+	gawt
+.
+	gimage
+.
+	gBufã»dImage
+;
+
+9 
+impÜt
+ 
+	gjava
+.
+	gio
+.
+	gFe
+;
+
+10 
+impÜt
+ 
+	gjava
+.
+	gio
+.
+	gIOExû±iÚ
+;
+
+11 
+impÜt
+ 
+	gjava
+.
+	gut
+.
+	gI‹¿tÜ
+;
+
+13 
+impÜt
+ 
+	gjavax
+.
+	gimageio
+.
+	gImageIO
+;
+
+14 
+impÜt
+ 
+	gjavax
+.
+	gswšg
+.
+	gJPª–
+;
+
+15 
+impÜt
+ 
+	gjavax
+.
+	gswšg
+.
+	gTim”
+;
+
+17 
+impÜt
+ 
+	gut
+.
+	gGameObjeù
+;
+
+44 
+public
+ cÏs 
+	cV›w”
+ 
+ex‹nds
+ 
+	mJPª–
+ {
+
+45 
+´iv©e
+ 
+	mCu¼’tAnim©iÚTime
+= 0;
+
+47 
+Mod–
+ 
+	mgamewÜld
+ =
+Ãw
+ Model();
+
+49 
+public
+ 
+	$V›w”
+(
+Mod–
+ 
+WÜld
+) {
+
+50 
+this
+.
+gamewÜld
+=
+WÜld
+;
+
+54 
+public
+ 
+	$V›w”
+(
+LayoutMªag”
+ 
+Ïyout
+) {
+
+55 
+	`su³r
+(
+Ïyout
+);
+
+57 
+	}
+}
+
+59 
+public
+ 
+	$V›w”
+(
+boŞ—n
+ 
+isDoubËBufã»d
+) {
+
+60 
+	`su³r
+(
+isDoubËBufã»d
+);
+
+62 
+	}
+}
+
+64 
+public
+ 
+	$V›w”
+(
+LayoutMªag”
+ 
+Ïyout
+, 
+boŞ—n
+ 
+isDoubËBufã»d
+) {
+
+65 
+	`su³r
+(
+Ïyout
+, 
+isDoubËBufã»d
+);
+
+67 
+	}
+}
+
+69 
+public
+ 
+	$upd©ev›w
+() {
+
+71 
+this
+.
+	`»·št
+();
+
+74 
+	}
+}
+
+77 
+public
+ 
+	$·štCompÚ’t
+(
+G¿phics
+ 
+g
+) {
+
+79 
+su³r
+.
+	`·štCompÚ’t
+(
+g
+);
+
+80 
+Cu¼’tAnim©iÚTime
+++;
+
+84 
+x
+ = (è
+gamewÜld
+.
+	`g‘PÏy”
+().
+	`g‘C’Œe
+().
+	`g‘X
+();
+
+85 
+y
+ = (è
+gamewÜld
+.
+	`g‘PÏy”
+().
+	`g‘C’Œe
+().
+	`g‘Y
+();
+
+86 
+width
+ = (è
+gamewÜld
+.
+	`g‘PÏy”
+().
+	`g‘Width
+();
+
+87 
+height
+ = (è
+gamewÜld
+.
+	`g‘PÏy”
+().
+	`g‘Height
+();
+
+88 
+SŒšg
+ 
+‹xtu»
+ = 
+gamewÜld
+.
+	`g‘PÏy”
+().
+	`g‘Textu»
+();
+
+91 
+	`d¿wBackground
+(
+g
+);
+
+94 
+	`d¿wPÏy”
+(
+x
+, 
+y
+, 
+width
+, 
+height
+, 
+‹xtu»
+,
+g
+);
+
+98 
+gamewÜld
+.
+	`g‘BuÎ‘s
+().
+	`fÜEach
+((
+‹mp
+) ->
+
+100 
+	`d¿wBuÎ‘
+((è
+‹mp
+.
+	`g‘C’Œe
+().
+	`g‘X
+(), (è‹mp.g‘C’Œe().
+	`g‘Y
+(), (è‹mp.
+	`g‘Width
+(), (è‹mp.
+	`g‘Height
+(),emp.
+	`g‘Textu»
+(),
+g
+);
+
+104 
+gamewÜld
+.
+	`g‘EÃm›s
+().
+	`fÜEach
+((
+‹mp
+) ->
+
+106 
+	`d¿wEÃm›s
+((è
+‹mp
+.
+	`g‘C’Œe
+().
+	`g‘X
+(), (è‹mp.g‘C’Œe().
+	`g‘Y
+(), (è‹mp.
+	`g‘Width
+(), (è‹mp.
+	`g‘Height
+(),emp.
+	`g‘Textu»
+(),
+g
+);
+
+109 
+	}
+}
+
+111 
+´iv©e
+ 
+	$d¿wEÃm›s
+(
+x
+, 
+y
+, 
+width
+, 
+height
+, 
+SŒšg
+ 
+‹xtu»
+, 
+G¿phics
+ 
+g
+) {
+
+112 
+Fe
+ 
+Textu»ToLßd
+ = 
+Ãw
+ 
+	`Fe
+(
+‹xtu»
+);
+
+113 
+Œy
+ {
+
+114 
+Image
+ 
+myImage
+ = 
+ImageIO
+.
+	`»ad
+(
+Textu»ToLßd
+);
+
+117 
+cu¼’tPos™iÚInAnim©iÚ
+ğ((è(
+Cu¼’tAnim©iÚTime
+%4 )*32);
+
+118 
+g
+.
+	`d¿wImage
+(
+myImage
+, 
+x
+,
+y
+, x+
+width
+, y+width, 
+cu¼’tPos™iÚInAnim©iÚ
+ , 0, cu¼’tPos™iÚInAnim©iÚ+31, 32, 
+nuÎ
+);
+
+120 } 
+	`ÿtch
+ (
+IOExû±iÚ
+ 
+e
+) {
+
+122 
+e
+.
+	`´štSckT¿û
+();
+
+125 
+	}
+}
+
+127 
+´iv©e
+ 
+	$d¿wBackground
+(
+G¿phics
+ 
+g
+)
+
+129 
+Fe
+ 
+Textu»ToLßd
+ = 
+Ãw
+ 
+	`Fe
+("../res/spacebackground.png");
+
+130 
+Œy
+ {
+
+131 
+Image
+ 
+myImage
+ = 
+ImageIO
+.
+	`»ad
+(
+Textu»ToLßd
+);
+
+132 
+g
+.
+	`d¿wImage
+(
+myImage
+, 0,0, 1000, 1000, 0 , 0, 1000, 1000, 
+nuÎ
+);
+
+134 } 
+	`ÿtch
+ (
+IOExû±iÚ
+ 
+e
+) {
+
+136 
+e
+.
+	`´štSckT¿û
+();
+
+138 
+	}
+}
+
+140 
+´iv©e
+ 
+	$d¿wBuÎ‘
+(
+x
+, 
+y
+, 
+width
+, 
+height
+, 
+SŒšg
+ 
+‹xtu»
+,
+G¿phics
+ 
+g
+)
+
+142 
+Fe
+ 
+Textu»ToLßd
+ = 
+Ãw
+ 
+	`Fe
+(
+‹xtu»
+);
+
+143 
+Œy
+ {
+
+144 
+Image
+ 
+myImage
+ = 
+ImageIO
+.
+	`»ad
+(
+Textu»ToLßd
+);
+
+146 
+g
+.
+	`d¿wImage
+(
+myImage
+, 
+x
+,
+y
+, x+
+width
+, y+width, 0 , 0, 63, 127, 
+nuÎ
+);
+
+148 } 
+	`ÿtch
+ (
+IOExû±iÚ
+ 
+e
+) {
+
+150 
+e
+.
+	`´štSckT¿û
+();
+
+152 
+	}
+}
+
+155 
+´iv©e
+ 
+	$d¿wPÏy”
+(
+x
+, 
+y
+, 
+width
+, 
+height
+, 
+SŒšg
+ 
+‹xtu»
+,
+G¿phics
+ 
+g
+) {
+
+156 
+Fe
+ 
+Textu»ToLßd
+ = 
+Ãw
+ 
+	`Fe
+(
+‹xtu»
+);
+
+157 
+Œy
+ {
+
+158 
+Image
+ 
+myImage
+ = 
+ImageIO
+.
+	`»ad
+(
+Textu»ToLßd
+);
+
+161 
+cu¼’tPos™iÚInAnim©iÚ
+ğ((è((
+Cu¼’tAnim©iÚTime
+%40)/10))*32;
+
+162 
+g
+.
+	`d¿wImage
+(
+myImage
+, 
+x
+,
+y
+, x+
+width
+, y+width, 
+cu¼’tPos™iÚInAnim©iÚ
+ , 0, cu¼’tPos™iÚInAnim©iÚ+31, 32, 
+nuÎ
+);
+
+164 } 
+	`ÿtch
+ (
+IOExû±iÚ
+ 
+e
+) {
+
+166 
+e
+.
+	`´štSckT¿û
+();
+
+174 
+	}
+}
+
+	@/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/src/util/GameObject.java
+
+1 
+·ckage
+ 
+	gut
+;
+
+26 
+public
+ cÏs 
+	cGameObjeù
+ {
+
+28 
+´iv©e
+ 
+Pošt3f
+ 
+	mûÁ»
+ğ
+Ãw
+ Point3f(0,0,0);
+
+29 
+´iv©e
+ 
+	mwidth
+=10;
+
+30 
+´iv©e
+ 
+	mheight
+=10;
+
+31 
+´iv©e
+ 
+boŞ—n
+ 
+	mhasTextu»d
+=
+çl£
+;
+
+32 
+´iv©e
+ 
+SŒšg
+ 
+	m‹xtu»LoÿtiÚ
+;
+
+33 
+´iv©e
+ 
+SŒšg
+ 
+	mbÏnk‹xtu»
+="../res/blankSprite.png";
+
+35 
+public
+ 
+	$GameObjeù
+() {
+
+39 
+public
+ 
+	$GameObjeù
+(
+SŒšg
+ 
+‹xtu»LoÿtiÚ
+,
+width
+,
+height
+,
+Pošt3f
+ 
+ûÁ»
+) {
+
+40 
+hasTextu»d
+=
+Œue
+;
+
+41 
+this
+.
+‹xtu»LoÿtiÚ
+=textureLocation;
+
+42 
+this
+.
+width
+=width;
+
+43 
+this
+.
+height
+=height;
+
+44 
+this
+.
+ûÁ»
+ =centre;
+
+45 
+	}
+}
+
+47 
+public
+ 
+Pošt3f
+ 
+	$g‘C’Œe
+() {
+
+48  
+ûÁ»
+;
+
+49 
+	}
+}
+
+51 
+public
+ 
+	$£tC’Œe
+(
+Pošt3f
+ 
+ûÁ»
+) {
+
+52 
+this
+.
+ûÁ»
+ = centre;
+
+56 
+	}
+}
+
+58 
+public
+ 
+	$g‘Width
+() {
+
+59  
+width
+;
+
+60 
+	}
+}
+
+62 
+public
+ 
+	$g‘Height
+() {
+
+63  
+height
+;
+
+64 
+	}
+}
+
+66 
+public
+ 
+SŒšg
+ 
+	$g‘Textu»
+() {
+
+67 if(
+hasTextu»d
+)
+
+69  
+‹xtu»LoÿtiÚ
+;
+
+72  
+bÏnk‹xtu»
+;
+
+73 
+	}
+}
+
+	@/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/src/util/Point3f.java
+
+1 
+·ckage
+ 
+	gut
+;
+
+29 
+public
+ cÏs 
+	cPošt3f
+ {
+
+31 
+´iv©e
+ 
+	mx
+;
+
+32 
+´iv©e
+ 
+	my
+;
+
+33 
+´iv©e
+ 
+	mz
+;
+
+35 
+´iv©e
+ 
+	mbound¬y
+=900;
+
+39 
+public
+ 
+	$Pošt3f
+() {
+
+40 
+	`£tX
+(0.0f);
+
+41 
+	`£tY
+(0.0f);
+
+42 
+	`£tZ
+(0.0f);
+
+46 
+public
+ 
+	$Pošt3f
+(
+x
+, 
+y
+, 
+z
+) {
+
+47 
+this
+.
+	`£tX
+(
+x
+);
+
+48 
+this
+.
+	`£tY
+(
+y
+);
+
+49 
+this
+.
+	`£tZ
+(
+z
+);
+
+50 
+	}
+}
+
+52 
+´iv©e
+ 
+	$£tBound¬y
+(
+bound¬y
+) {
+
+53 
+this
+.
+bound¬y
+ = boundary;
+
+55 
+	}
+}
+
+58 
+public
+ 
+	$g‘Po¡iÚ
+(
+po¡iÚ
+)
+
+60 
+po¡iÚ
+)
+
+62 0:  
+	`g‘X
+();
+
+63 1:  
+	`g‘Y
+();
+
+64 2:  
+	`g‘Z
+();
+
+65 :  
+Flßt
+.
+NaN
+;
+
+67 
+	}
+}
+
+69 
+public
+ 
+SŒšg
+ 
+	$toSŒšg
+()
+
+71  ("(" + 
+	`g‘X
+(è+"," + 
+	`g‘Y
+(è+"," + 
+	`g‘Z
+() +")");
+
+72 
+	}
+}
+
+77 
+public
+ 
+Pošt3f
+ 
+	$PlusVeùÜ
+(
+VeùÜ3f
+ 
+Add™Ú®
+) {
+
+78  
+Ãw
+ 
+	`Pošt3f
+(
+this
+.
+	`g‘X
+()+
+Add™Ú®
+.g‘X(),his.
+	`g‘Y
+()+Add™Ú®.g‘Y(),his.
+	`g‘Z
+()+Additonal.getZ());
+
+79 
+	}
+}
+
+82 
+public
+ 
+Pošt3f
+ 
+	$MšusVeùÜ
+(
+VeùÜ3f
+ 
+Mšus
+) {
+
+83  
+Ãw
+ 
+	`Pošt3f
+(
+this
+.
+	`g‘X
+()-
+Mšus
+.g‘X(),his.
+	`g‘Y
+()-Mšus.g‘Y(),his.
+	`g‘Z
+()-Minus.getZ());
+
+84 
+	}
+}
+
+88 
+public
+ 
+VeùÜ3f
+ 
+	$MšusPošt
+(
+Pošt3f
+ 
+Mšus
+) {
+
+89  
+Ãw
+ 
+	`VeùÜ3f
+(
+this
+.
+	`g‘X
+()-
+Mšus
+.g‘X(),his.
+	`g‘Y
+()-Mšus.g‘Y(),his.
+	`g‘Z
+()-Minus.getZ());
+
+90 
+	}
+}
+
+95 
+public
+ 
+	$AµlyVeùÜ
+(
+VeùÜ3f
+ 
+veùÜ
+) {
+
+96 
+	`£tX
+(
+	`CheckBound¬y
+(
+this
+.
+	`g‘X
+()+
+veùÜ
+.getX()));
+
+97 
+	`£tY
+(
+	`CheckBound¬y
+(
+this
+.
+	`g‘Y
+()-
+veùÜ
+.getY()));
+
+98 
+	`£tZ
+(
+	`CheckBound¬y
+(
+this
+.
+	`g‘Z
+()-
+veùÜ
+.getZ()));
+
+99 
+	}
+}
+
+101 
+´iv©e
+ 
+	$CheckBound¬y
+(
+f
+) {
+
+102 ià(
+f
+<0) f=0.0f;
+
+103 ià(
+f
+>
+bound¬y
+)f=() boundary;
+
+104  
+f
+;
+
+105 
+	}
+}
+
+107 
+public
+ 
+	$g‘X
+() {
+
+108  
+x
+;
+
+109 
+	}
+}
+
+111 
+public
+ 
+	$£tX
+(
+x
+) {
+
+112 
+this
+.
+x
+ = x;
+
+113 
+	}
+}
+
+115 
+public
+ 
+	$g‘Y
+() {
+
+116  
+y
+;
+
+117 
+	}
+}
+
+119 
+public
+ 
+	$£tY
+(
+y
+) {
+
+120 
+this
+.
+y
+ = y;
+
+121 
+	}
+}
+
+123 
+public
+ 
+	$g‘Z
+() {
+
+124  
+z
+;
+
+125 
+	}
+}
+
+127 
+public
+ 
+	$£tZ
+(
+z
+) {
+
+128 
+this
+.
+z
+ = z;
+
+129 
+	}
+}
+
+	@/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/src/util/UnitTests.java
+
+1 
+·ckage
+ 
+	gut
+;
+
+26 
+public
+ cÏs 
+	cUn™Te¡s
+ {
+
+29 
+public
+ 
+	$CheckF¿meR©e
+(
+T¬g‘Time
+,
+D–iv”edTime
+,
+T¬g‘FPS
+)
+
+31 
+TimeB‘w“nF¿mes
+ = 1000 / 
+T¬g‘FPS
+;
+
+32 ifĞ(
+T¬g‘Time
+ -
+D–iv”edTime
+è> 
+TimeB‘w“nF¿mes
+)
+
+34 
+Sy¡em
+.
+out
+.
+	`´šn
+("FPS failure by 10 m");
+
+35 
+Sy¡em
+.
+out
+.
+	`´šn
+("F¿mwa Ï‹ by "+ (
+T¬g‘Time
+ - 
+D–iv”edTime
+) + " ms");
+
+40 
+	}
+}
+
+	@/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/src/util/Vector3f.java
+
+1 
+·ckage
+ 
+	gut
+;
+
+27 
+public
+ cÏs 
+	cVeùÜ3f
+ {
+
+29 
+´iv©e
+ 
+	mx
+=0;
+
+30 
+´iv©e
+ 
+	my
+=0;
+
+31 
+´iv©e
+ 
+	mz
+=0;
+
+33 
+public
+ 
+	$VeùÜ3f
+()
+
+35 
+	`£tX
+(0.0f);
+
+36 
+	`£tY
+(0.0f);
+
+37 
+	`£tZ
+(0.0f);
+
+40 
+public
+ 
+	$VeùÜ3f
+(
+x
+, 
+y
+, 
+z
+)
+
+42 
+this
+.
+	`£tX
+(
+x
+);
+
+43 
+this
+.
+	`£tY
+(
+y
+);
+
+44 
+this
+.
+	`£tZ
+(
+z
+);
+
+45 
+	}
+}
+
+48 
+public
+ 
+VeùÜ3f
+ 
+	$PlusVeùÜ
+(
+VeùÜ3f
+ 
+Add™Ú®
+)
+
+50  
+Ãw
+ 
+	`VeùÜ3f
+(
+this
+.
+	`g‘X
+()+
+Add™Ú®
+.g‘X(),his.
+	`g‘Y
+()+Add™Ú®.g‘Y(),his.
+	`g‘Z
+()+Additonal.getZ());
+
+51 
+	}
+}
+
+54 
+public
+ 
+VeùÜ3f
+ 
+	$MšusVeùÜ
+(
+VeùÜ3f
+ 
+Mšus
+)
+
+56  
+Ãw
+ 
+	`VeùÜ3f
+(
+this
+.
+	`g‘X
+()-
+Mšus
+.g‘X(),his.
+	`g‘Y
+()-Mšus.g‘Y(),his.
+	`g‘Z
+()-Minus.getZ());
+
+57 
+	}
+}
+
+60 
+public
+ 
+Pošt3f
+ 
+	$PlusPošt
+(
+Pošt3f
+ 
+Add™Ú®
+)
+
+62  
+Ãw
+ 
+	`Pošt3f
+(
+this
+.
+	`g‘X
+()+
+Add™Ú®
+.g‘X(),his.
+	`g‘Y
+()+Add™Ú®.g‘Y(),his.
+	`g‘Z
+()+Additonal.getZ());
+
+63 
+	}
+}
+
+67 
+public
+ 
+VeùÜ3f
+ 
+	$bySÿÏr
+(
+sÿË
+ )
+
+69  
+Ãw
+ 
+	`VeùÜ3f
+(
+this
+.
+	`g‘X
+()*
+sÿË
+,his.
+	`g‘Y
+()*sÿË,his.
+	`g‘Z
+()*scale);
+
+70 
+	}
+}
+
+73 
+public
+ 
+VeùÜ3f
+ 
+	$Neg©eVeùÜ
+()
+
+75  
+Ãw
+ 
+	`VeùÜ3f
+(-
+this
+.
+	`g‘X
+(), -this.
+	`g‘Y
+(), -this.
+	`g‘Z
+());
+
+76 
+	}
+}
+
+79 
+public
+ 
+	$Ëngth
+()
+
+81  (è
+M©h
+.
+	`sq¹
+(
+	`g‘X
+()*g‘X(è+ 
+	`g‘Y
+()*g‘Y(è+ 
+	`g‘Z
+()*getZ());
+
+82 
+	}
+}
+
+85 
+public
+ 
+VeùÜ3f
+ 
+	$NÜm®
+()
+
+87 
+L’gthOfTheVeùÜ
+ğ
+this
+.
+	`Ëngth
+();
+
+88  
+this
+.
+	`bySÿÏr
+(1.0f/ 
+L’gthOfTheVeùÜ
+);
+
+89 
+	}
+}
+
+93 
+public
+ 
+	$dÙ
+(
+VeùÜ3f
+ 
+v
+)
+
+95  ( 
+this
+.
+	`g‘X
+()*
+v
+.g‘X(è+his.
+	`g‘Y
+()*v.g‘Y(è+his.
+	`g‘Z
+()*v.getZ());
+
+96 
+	}
+}
+
+99 
+public
+ 
+VeùÜ3f
+ 
+	$üoss
+(
+VeùÜ3f
+ 
+v
+)
+
+101 
+u0
+ = (
+this
+.
+	`g‘Y
+()*
+v
+.
+	`g‘Z
+() - getZ()*v.getY());
+
+102 
+u1
+ = (
+	`g‘Z
+()*
+v
+.
+	`g‘X
+() - getX()*v.getZ());
+
+103 
+u2
+ = (
+	`g‘X
+()*
+v
+.
+	`g‘Y
+() - getY()*v.getX());
+
+104  
+Ãw
+ 
+	`VeùÜ3f
+(
+u0
+,
+u1
+,
+u2
+);
+
+105 
+	}
+}
+
+107 
+public
+ 
+	$g‘X
+() {
+
+108  
+x
+;
+
+109 
+	}
+}
+
+111 
+public
+ 
+	$£tX
+(
+x
+) {
+
+112 
+this
+.
+x
+ = x;
+
+113 
+	}
+}
+
+115 
+public
+ 
+	$g‘Y
+() {
+
+116  
+y
+;
+
+117 
+	}
+}
+
+119 
+public
+ 
+	$£tY
+(
+y
+) {
+
+120 
+this
+.
+y
+ = y;
+
+121 
+	}
+}
+
+123 
+public
+ 
+	$g‘Z
+() {
+
+124  
+z
+;
+
+125 
+	}
+}
+
+127 
+public
+ 
+	$£tZ
+(
+z
+) {
+
+128 
+this
+.
+z
+ = z;
+
+129 
+	}
+}
+
+	@
+1
+.
+0
+9
+1036
+/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/Controller.java
+/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/src/Controller.java
+/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/src/MainWindow.java
+/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/src/Model.java
+/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/src/Viewer.java
+/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/src/util/GameObject.java
+/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/src/util/Point3f.java
+/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/src/util/UnitTests.java
+/home/nick-benevento/Documents/junior_year/ucd/ucd_game_development/project1/BasicGameTemplate/src/util/Vector3f.java
