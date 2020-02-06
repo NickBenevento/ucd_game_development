@@ -114,7 +114,6 @@ public class Point3f {
     }
 
     private float CheckBoundaryY(float f) {
-        System.out.println("y: " + f);
         if (f < 0) {
             f = 0.0f;
         }

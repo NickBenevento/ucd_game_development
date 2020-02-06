@@ -43,6 +43,7 @@ import util.GameObject;
  */
 public class Viewer extends JPanel {
     private long CurrentAnimationTime = 0;
+    private char[][] grid;
 
     Model gameworld = new Model();
 
@@ -64,6 +65,10 @@ public class Viewer extends JPanel {
     public Viewer(LayoutManager layout, boolean isDoubleBuffered) {
         super(layout, isDoubleBuffered);
         // TODO Auto-generated constructor stub
+    }
+
+    public void setLevel(char[][] grid) {
+        this.grid = grid;
     }
 
     public void updateview() {
@@ -119,16 +124,55 @@ public class Viewer extends JPanel {
     }
 
     private void drawBackground(Graphics g) {
-        //File TextureToLoad = new File("../res/spacebackground.png");          //should work okay on OSX and Linux but check if you have issues depending your eclipse install or if your running this without an IDE
-		File TextureToLoad = new File("../res/ice_floor.png");
+        File TextureToLoad;
 
+        TextureToLoad = new File("../res/ice.jpg");
         try {
             Image myImage = ImageIO.read(TextureToLoad);
-            g.drawImage(myImage, 0, 0, 1000, 1000, 0, 0, 1000, 1000, null);
+            g.drawImage(myImage, 0, 0, 1000, 1000, null);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        int x = 100;
+        int y = 100;
+
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (grid[i][j] == 'X') {
+                    //TextureToLoad = new File("../res/ice_block.png");
+                    TextureToLoad = new File("../res/iceblock.png");
+                } else if (grid[i][j] == 'B') {
+                    TextureToLoad = new File("../res/boulder.png");
+                } else if (grid[i][j] == 'O') {
+                    TextureToLoad = new File("../res/hole.png");
+                } else {
+                    System.out.println("grid char not recognized");
+                    TextureToLoad = new File("../res/blankSprite.png");
+                }
+
+                try {
+                    Image myImage = ImageIO.read(TextureToLoad);
+                    g.drawImage(myImage, x, y, 40, 40, null);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                x += 40;
+            }
+            y += 40;
+            x  = 100;
+        }
+        //File TextureToLoad = new File("../res/spacebackground.png");          //should work okay on OSX and Linux but check if you have issues depending your eclipse install or if your running this without an IDE
+        //File TextureToLoad = new File("../res/ice_floor.png");
+
+        //try {
+        //    Image myImage = ImageIO.read(TextureToLoad);
+        //    g.drawImage(myImage, 0, 0, 1000, 1000, 0, 0, 1000, 1000, null);
+        //} catch (IOException e) {
+        //    // TODO Auto-generated catch block
+        //    e.printStackTrace();
+        //}
     }
 
     private void drawBullet(int x, int y, int width, int height, String texture, Graphics g) {
