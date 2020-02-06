@@ -165,9 +165,11 @@ public class MainWindow {
             System.exit(0);
         }
 
+        scoreboard.updateMoves(gameworld.getMoves());
         // Both these calls could be setup as  a thread but we want to simplify the game logic for you.
         //score update
-        frame.setTitle("Score =  " + gameworld.getScore());
+        //frame.setTitle("Score =  " + gameworld.getScore());
+        //frame.setTitle("Moves =  " + gameworld.getScore());
     }
 
     class TimerListener implements ActionListener {

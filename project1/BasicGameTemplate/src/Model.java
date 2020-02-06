@@ -39,7 +39,8 @@ public class Model {
     private int Lives       = 3;
     private boolean sliding = false;
     private Direction playerDirection;
-    private boolean onIce = true;
+    //private boolean onIce = true;
+    private int moves = 0;
 
     enum Direction {
         LEFT,
@@ -52,15 +53,8 @@ public class Model {
     public Model() {
         //setup game world
         //Player
-        Player          = new GameObject("../res/Lightning.png", 50, 50, new Point3f(500, 500, 0));
+        Player          = new GameObject("../res/seal.png", 60, 40, new Point3f(500, 500, 0));
         playerDirection = Direction.STILL;
-
-        //Enemies  starting with four
-
-        //EnemiesList.add(new GameObject("../res/UFO.png", 50, 50, new Point3f(((float)Math.random() * 50 + 400), 0, 0)));
-        //EnemiesList.add(new GameObject("../res/UFO.png", 50, 50, new Point3f(((float)Math.random() * 50 + 500), 0, 0)));
-        //EnemiesList.add(new GameObject("../res/UFO.png", 50, 50, new Point3f(((float)Math.random() * 100 + 500), 0, 0)));
-        //EnemiesList.add(new GameObject("../res/UFO.png", 50, 50, new Point3f(((float)Math.random() * 100 + 400), 0, 0)));
     }
 
     // This is the heart of the game , where the model takes in all the inputs ,decides the outcomes and then changes the model accordingly.
@@ -69,8 +63,6 @@ public class Model {
         playerLogic();
         // Enemy Logic next
         enemyLogic();
-        // Bullets move next
-        bulletLogic();
         // interactions between objects
         gameLogic();
     }
@@ -105,39 +97,6 @@ public class Model {
             // Move enemies
 
             temp.getCentre().ApplyVector(new Vector3f(0, -1, 0));
-
-
-            //see if they get to the top of the screen ( remember 0 is the top
-            if (temp.getCentre().getY() == 900.0f) {          // current boundary need to pass value to model
-                EnemiesList.remove(temp);
-
-                // enemies win so lives decreased
-                //Score--;
-                Lives--;
-            }
-        }
-
-        //if (EnemiesList.size() < 2) {
-        //    while (EnemiesList.size() < 6) {
-        //        EnemiesList.add(new GameObject("../res/UFO.png", 50, 50, new Point3f(((float)Math.random() * 1000), 0, 0)));
-        //    }
-        //}
-    }
-
-    private void bulletLogic() {
-        // TODO Auto-generated method stub
-        // move bullets
-
-        for (GameObject temp : BulletList) {
-            //check to move them
-
-            temp.getCentre().ApplyVector(new Vector3f(0, 5, 0));
-            //see if they hit anything
-
-            //see if they get to the top of the screen ( remember 0 is the top
-            if (temp.getCentre().getY() == 0) {
-                BulletList.remove(temp);
-            }
         }
     }
 
@@ -145,19 +104,23 @@ public class Model {
         // smoother animation is possible if we make a target position  // done but may try to change things for students
 
         //check for movement
-        if (onIce && playerDirection == Direction.STILL) {
+        if (playerDirection == Direction.STILL) {
             if (Controller.getInstance().isKeyAPressed()) {
                 Player.getCentre().ApplyVector(new Vector3f(-3, 0, 0));
                 playerDirection = Direction.LEFT;
+                moves++;
             } else if (Controller.getInstance().isKeyDPressed()) {
                 Player.getCentre().ApplyVector(new Vector3f(3, 0, 0));
                 playerDirection = Direction.RIGHT;
+                moves++;
             } else if (Controller.getInstance().isKeyWPressed()) {
                 Player.getCentre().ApplyVector(new Vector3f(0, 3, 0));
                 playerDirection = Direction.UP;
+                moves++;
             } else if (Controller.getInstance().isKeySPressed()) {
                 Player.getCentre().ApplyVector(new Vector3f(0, -3, 0));
                 playerDirection = Direction.DOWN;
+                moves++;
             }
         }
         switch (playerDirection)
@@ -171,7 +134,7 @@ public class Model {
 
             case RIGHT:     // sliding right
                 Player.getCentre().ApplyVector(new Vector3f(3, 0, 0));
-                if (Player.getCentre().getX() == Player.getCentre().getBoundary()) {
+                if (Player.getCentre().getX() == Player.getCentre().getBoundaryX()) {
                     playerDirection = Direction.STILL;
                 }
                 break;
@@ -185,7 +148,7 @@ public class Model {
 
             case DOWN:     // sliding down
                 Player.getCentre().ApplyVector(new Vector3f(0, -3, 0));
-                if (Player.getCentre().getY() == Player.getCentre().getBoundary()) {
+                if (Player.getCentre().getY() == Player.getCentre().getBoundaryY()) {
                     playerDirection = Direction.STILL;
                 }
                 break;
@@ -198,24 +161,19 @@ public class Model {
         //if (playerDirection != Direction.STILL && playerIsStopped()) {
         //    playerDirection = Direction.STILL;
         //}
-
-        //if (Controller.getInstance().isKeySpacePressed()) {
-        //    CreateBullet();
-        //    Controller.getInstance().setKeySpacePressed(false);
-        //}
     }
 
-    private boolean playerIsStopped() {
-        float x        = Player.getCentre().getX();
-        float y        = Player.getCentre().getY();
-        int   boundary = Player.getCentre().getBoundary();
+    //private boolean playerIsStopped() {
+    //    float x        = Player.getCentre().getX();
+    //    float y        = Player.getCentre().getY();
+    //    int   boundary = Player.getCentre().getBoundary();
 
-        if (x == boundary || y == boundary || x == 0 || y == 0) {
-            //playerDirection = Direction.STILL;
-            return true;
-        }
-        return false;
-    }
+    //    if (x == boundary || y == boundary || x == 0 || y == 0) {
+    //        //playerDirection = Direction.STILL;
+    //        return true;
+    //    }
+    //    return false;
+    //}
 
     private void CreateBullet() {
         BulletList.add(new GameObject("../res/bullet.png", 32, 64, new Point3f(Player.getCentre().getX(), Player.getCentre().getY(), 0.0f)));
@@ -229,12 +187,16 @@ public class Model {
         return EnemiesList;
     }
 
+    public int getScore() {
+        return Score;
+    }
+
     public CopyOnWriteArrayList <GameObject> getBullets() {
         return BulletList;
     }
 
-    public int getScore() {
-        return Score;
+    public int getMoves() {
+        return moves;
     }
 
     public int getLives() {
