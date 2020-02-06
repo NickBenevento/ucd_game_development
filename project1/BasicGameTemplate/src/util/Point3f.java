@@ -32,8 +32,8 @@ public class Point3f {
     private float y;
     private float z;
 
-    private int boundaryX = 940;
-    private int boundaryY = 960;
+    private int boundaryX = 930;
+    private int boundaryY = 920;
 
 
     // default constructor
@@ -114,10 +114,11 @@ public class Point3f {
     }
 
     private float CheckBoundaryY(float f) {
+        System.out.println("y: " + f);
         if (f < 0) {
             f = 0.0f;
         }
-        if (f > boundaryX) {
+        if (f > boundaryY) {
             f = (float)boundaryY;
         }
         return f;

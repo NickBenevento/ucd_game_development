@@ -157,6 +157,10 @@ public class Model {
                 break;
         }
 
+        // if collision
+        //	player direction = still
+
+
         // check if the player hit an obstacle
         //if (playerDirection != Direction.STILL && playerIsStopped()) {
         //    playerDirection = Direction.STILL;
