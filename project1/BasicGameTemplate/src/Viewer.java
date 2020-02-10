@@ -44,11 +44,15 @@ import util.GameObject;
 public class Viewer extends JPanel {
     private long CurrentAnimationTime = 0;
     private char[][] grid;
-
     Model gameworld = new Model();
+    //BufferedImage background;
+    BackgroundGrid background;
+    //File TextureToLoad = new File("../res/iceblock.png");
 
     public Viewer(Model World) {
         this.gameworld = World;
+        background     = new BackgroundGrid();
+        background.setBounds(0, 0, 1000, 1000);
         // TODO Auto-generated constructor stub
     }
 
@@ -69,6 +73,40 @@ public class Viewer extends JPanel {
 
     public void setLevel(char[][] grid) {
         this.grid = grid;
+
+        int x = 100;
+        int y = 100;
+
+        File TextureToLoad;
+
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (grid[i][j] == 'X') {
+                    //TextureToLoad = new File("../res/ice_block.png");
+                    TextureToLoad = new File("../res/iceblock.png");
+                } else if (grid[i][j] == 'B') {
+                    TextureToLoad = new File("../res/boulder.png");
+                } else if (grid[i][j] == 'O') {
+                    TextureToLoad = new File("../res/hole.png");
+                } else {
+                    System.out.println("grid char not recognized");
+                    TextureToLoad = new File("../res/blankSprite.png");
+                }
+
+                try {
+                    Image myImage = ImageIO.read(TextureToLoad);
+                    //g.drawImage(myImage, x, y, 40, 40, null);
+                    background.addSquare(myImage, x, y);
+                    //g.drawImage(myImage, x, y, 40, 40, null);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                x += 40;
+            }
+            y += 40;
+            x  = 100;
+        }
     }
 
     public void updateview() {
@@ -89,11 +127,14 @@ public class Viewer extends JPanel {
         String texture = gameworld.getPlayer().getTexture();
 
         //Draw background
-        drawBackground(g);
+        //drawBackground(g);
 
         //Draw player
         drawPlayer(x, y, width, height, texture, g);
 
+        background.repaint();
+
+        //g.drawImage(background, 0, 0, null);
         //Draw Bullets
         // change back
         gameworld.getBullets().forEach((temp)->
@@ -124,45 +165,17 @@ public class Viewer extends JPanel {
     }
 
     private void drawBackground(Graphics g) {
-        File TextureToLoad;
+        File background;
 
-        TextureToLoad = new File("../res/ice.jpg");
+        background = new File("../res/ice.jpg");
         try {
-            Image myImage = ImageIO.read(TextureToLoad);
+            Image myImage = ImageIO.read(background);
             g.drawImage(myImage, 0, 0, 1000, 1000, null);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        int x = 100;
-        int y = 100;
 
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                if (grid[i][j] == 'X') {
-                    //TextureToLoad = new File("../res/ice_block.png");
-                    TextureToLoad = new File("../res/iceblock.png");
-                } else if (grid[i][j] == 'B') {
-                    TextureToLoad = new File("../res/boulder.png");
-                } else if (grid[i][j] == 'O') {
-                    TextureToLoad = new File("../res/hole.png");
-                } else {
-                    System.out.println("grid char not recognized");
-                    TextureToLoad = new File("../res/blankSprite.png");
-                }
-
-                try {
-                    Image myImage = ImageIO.read(TextureToLoad);
-                    g.drawImage(myImage, x, y, 40, 40, null);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                x += 40;
-            }
-            y += 40;
-            x  = 100;
-        }
         //File TextureToLoad = new File("../res/spacebackground.png");          //should work okay on OSX and Linux but check if you have issues depending your eclipse install or if your running this without an IDE
         //File TextureToLoad = new File("../res/ice_floor.png");
 
@@ -206,5 +219,40 @@ public class Viewer extends JPanel {
         //Lighnting Png from https://opengameart.org/content/animated-spaceships  its 32x32 thats why I know to increament by 32 each time
         // Bullets from https://opengameart.org/forumtopic/tatermands-art
         // background image from https://www.needpix.com/photo/download/677346/space-stars-nebula-background-galaxy-universe-free-pictures-free-photos-free-images
+    }
+
+    static class BackgroundGrid extends JPanel {
+        private final static int size = 800;
+        private BufferedImage background;
+        //private Image background;
+
+        public BackgroundGrid() {
+            background = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        }
+
+        public void addSquare(Image image, int x, int y) {
+            Graphics2D g = (Graphics2D)background.getGraphics();
+
+            g.drawImage(image, x, y, 40, 40, null);
+            repaint();
+        }
+
+        @Override
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            //Graphics2D g2d = (Graphics2D)g;
+            //g.drawImage(background, 0, 0, null);
+
+            //File TextureToLoad = new File("../res/boulder.png");
+
+            //try {
+            //Image myImage = ImageIO.read(TextureToLoad);
+            //g.drawImage(myImage, 0, 0, 50, 50, null);
+            g.drawImage(background, 0, 0, null);
+            //} catch (IOException e) {
+            // TODO Auto-generated catch block
+            // e.printStackTrace();
+            //}
+        }
     }
 }
