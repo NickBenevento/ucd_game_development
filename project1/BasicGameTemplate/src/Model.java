@@ -102,7 +102,7 @@ public class Model {
 
     private void playerLogic() {
         // smoother animation is possible if we make a target position  // done but may try to change things for students
-
+        //System.out.println(playerDirection);
         //check for movement
         if (playerDirection == Direction.STILL) {
             if (Controller.getInstance().isKeyAPressed()) {
@@ -153,7 +153,7 @@ public class Model {
                 }
                 break;
 
-            default:
+            default:            // still
                 break;
         }
 
@@ -179,10 +179,6 @@ public class Model {
     //    return false;
     //}
 
-    private void CreateBullet() {
-        BulletList.add(new GameObject("../res/bullet.png", 32, 64, new Point3f(Player.getCentre().getX(), Player.getCentre().getY(), 0.0f)));
-    }
-
     public GameObject getPlayer() {
         return Player;
     }
@@ -193,10 +189,6 @@ public class Model {
 
     public int getScore() {
         return Score;
-    }
-
-    public CopyOnWriteArrayList <GameObject> getBullets() {
-        return BulletList;
     }
 
     public int getMoves() {
