@@ -16,8 +16,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JLayeredPane;
-import javax.swing.JScrollPane;
 import javax.swing.Timer;
 
 import util.UnitTests;
@@ -52,11 +50,7 @@ import util.UnitTests;
 public class MainWindow {
     private static JFrame frame = new JFrame("Game");           // Change to the name of your game
     private static Scoreboard scoreboard;                       // high scores for the game
-    private static Model gameworld = new Model();
-    //private static BackgroundGrid background = new BackgroundGrid();
-    private static JLayeredPane layeredPane = new JLayeredPane();
-    private static JPanel master            = new JPanel(new CardLayout());
-    private static JScrollPane scrollPane;
+    private static Model gameworld   = new Model();
     private static Viewer canvas     = new Viewer(gameworld);
     private KeyListener Controller   = new Controller();
     private static int TargetFPS     = 100;
@@ -75,39 +69,24 @@ public class MainWindow {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //If exit // you can modify with your way of quitting , just is a template.
         frame.setLayout(null);
         //frame.setLayout(BorderLayout);
-        //frame.add(canvas);
+        frame.add(canvas);
         canvas.setBounds(0, 0, 1000, 1000);
 
         //canvas.setBackground(new Color(255, 255, 255)); //white background  replaced by Space background but if you remove the background method this will draw a white screen
-        canvas.setVisible(false);                       // this will become visible after you press the key.
+        canvas.setVisible(false);                            // this will become visible after you press the key.
 
-        canvas.background.setVisible(false);
-        layeredPane.setBounds(0, 0, 1000, 1000);
-        layeredPane.add(canvas, 1);
-        layeredPane.add(canvas.background, 0);
-        frame.add(layeredPane);
-        //master.setBounds(0, 0, 1000, 1000);
-        //layeredPane.setOpaque(false);
-
-        JButton startMenuButton = new JButton("Start Game");          // start button
+        JButton startMenuButton = new JButton("Start Game"); // start button
         startMenuButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 startMenuButton.setVisible(false);
                 BackgroundImageForStartMenu.setVisible(false);
                 canvas.setVisible(true);
-                canvas.background.setVisible(true);
+                //canvas.background.setVisible(true);
                 canvas.addKeyListener(Controller);                               //adding the controller to the Canvas
                 canvas.requestFocusInWindow();                                   // making sure that the Canvas is in focus so keyboard input will be taking in .
                 canvas.setLevel(Level1);
 
-                //master.add(canvas);
-                //master.add(canvas.background);
-                //scrollPane = new JScrollPane(layeredPane);
-                //scrollPane.setBounds(0, 0, 1000, 1000);
-                //frame.add(scrollPane);
-
-                //frame.add(canvas);
 
                 scoreboard = new Scoreboard();
                 //buttons    = new ButtonListener();

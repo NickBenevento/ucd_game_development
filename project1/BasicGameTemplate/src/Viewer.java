@@ -91,9 +91,10 @@ public class Viewer extends JPanel {
         drawBackground(g);
 
         //Draw player
-        drawPlayer(x, y, width, height, texture, g);
 
         g.drawImage(background.background, 0, 0, null);
+
+        drawPlayer(x, y, width, height, texture, g);
         //background.repaint();
     }
 
