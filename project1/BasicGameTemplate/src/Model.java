@@ -35,12 +35,15 @@ public class Model {
     private Controller controller = Controller.getInstance();
     private CopyOnWriteArrayList <GameObject> EnemiesList = new CopyOnWriteArrayList <GameObject>();
     private CopyOnWriteArrayList <GameObject> BulletList  = new CopyOnWriteArrayList <GameObject>();
+    private int startX      = 86;
+    private int startY      = 855;
     private int Score       = 0;
     private int Lives       = 3;
     private boolean sliding = false;
     private Direction playerDirection;
-    //private boolean onIce = true;
-    private int moves = 0;
+    private int Moves = 0;
+    private int targetX;
+    private int targetY;
 
     enum Direction {
         LEFT,
@@ -53,8 +56,10 @@ public class Model {
     public Model() {
         //setup game world
         //Player
-        Player          = new GameObject("../res/seal.png", 60, 40, new Point3f(500, 500, 0));
+        Player          = new GameObject("../res/seal.png", 60, 40, new Point3f(startX, startY, 0));
         playerDirection = Direction.STILL;
+        targetX         = startX;
+        targetY         = startY;
     }
 
     // This is the heart of the game , where the model takes in all the inputs ,decides the outcomes and then changes the model accordingly.
@@ -101,60 +106,64 @@ public class Model {
     }
 
     private void playerLogic() {
-        // smoother animation is possible if we make a target position  // done but may try to change things for students
-        //System.out.println(playerDirection);
-        //check for movement
-        if (playerDirection == Direction.STILL) {
-            if (Controller.getInstance().isKeyAPressed()) {
-                Player.getCentre().ApplyVector(new Vector3f(-3, 0, 0));
-                playerDirection = Direction.LEFT;
-                moves++;
-            } else if (Controller.getInstance().isKeyDPressed()) {
-                Player.getCentre().ApplyVector(new Vector3f(3, 0, 0));
-                playerDirection = Direction.RIGHT;
-                moves++;
-            } else if (Controller.getInstance().isKeyWPressed()) {
-                Player.getCentre().ApplyVector(new Vector3f(0, 3, 0));
-                playerDirection = Direction.UP;
-                moves++;
-            } else if (Controller.getInstance().isKeySPressed()) {
-                Player.getCentre().ApplyVector(new Vector3f(0, -3, 0));
-                playerDirection = Direction.DOWN;
-                moves++;
+        if (Player.getCentre().getX() == targetX && Player.getCentre().getY() == targetY) {
+            playerDirection = Direction.STILL;
+        } else {
+            // animation of character is done by moving 40 pixels (to stay in line with the grid) in 8 different time steps (5 pixels each time until the character reaches the target square
+            switch (playerDirection)
+            {
+                case LEFT:     // sliding left
+                    Player.getCentre().ApplyVector(new Vector3f(-5, 0, 0));
+                    if (Player.getCentre().getX() == 0) {
+                        playerDirection = Direction.STILL;
+                    }
+                    break;
+
+                case RIGHT:     // sliding right
+                    Player.getCentre().ApplyVector(new Vector3f(5, 0, 0));
+                    if (Player.getCentre().getX() == Player.getCentre().getBoundaryX()) {
+                        playerDirection = Direction.STILL;
+                    }
+                    break;
+
+                case UP:     // sliding up
+                    Player.getCentre().ApplyVector(new Vector3f(0, 5, 0));
+                    if (Player.getCentre().getY() == 0) {
+                        playerDirection = Direction.STILL;
+                    }
+                    break;
+
+                case DOWN:     // sliding down
+                    Player.getCentre().ApplyVector(new Vector3f(0, -5, 0));
+                    if (Player.getCentre().getY() == Player.getCentre().getBoundaryY()) {
+                        playerDirection = Direction.STILL;
+                    }
+                    break;
+
+                default:        // still
+                    break;
             }
         }
-        switch (playerDirection)
-        {
-            case LEFT:      // sliding left
-                Player.getCentre().ApplyVector(new Vector3f(-3, 0, 0));
-                if (Player.getCentre().getX() == 0) {
-                    playerDirection = Direction.STILL;
-                }
-                break;
 
-            case RIGHT:     // sliding right
-                Player.getCentre().ApplyVector(new Vector3f(3, 0, 0));
-                if (Player.getCentre().getX() == Player.getCentre().getBoundaryX()) {
-                    playerDirection = Direction.STILL;
-                }
-                break;
-
-            case UP:        // sliding up
-                Player.getCentre().ApplyVector(new Vector3f(0, 3, 0));
-                if (Player.getCentre().getY() == 0) {
-                    playerDirection = Direction.STILL;
-                }
-                break;
-
-            case DOWN:     // sliding down
-                Player.getCentre().ApplyVector(new Vector3f(0, -3, 0));
-                if (Player.getCentre().getY() == Player.getCentre().getBoundaryY()) {
-                    playerDirection = Direction.STILL;
-                }
-                break;
-
-            default:            // still
-                break;
+        //check for movement if player is not currently moving
+        if (playerDirection == Direction.STILL) {
+            if (Controller.getInstance().isKeyAPressed()) {
+                playerDirection = Direction.LEFT;
+                targetX         = (int)Player.getCentre().getX() - 40;
+                Moves++;
+            } else if (Controller.getInstance().isKeyDPressed()) {
+                playerDirection = Direction.RIGHT;
+                targetX         = (int)Player.getCentre().getX() + 40;
+                Moves++;
+            } else if (Controller.getInstance().isKeyWPressed()) {
+                playerDirection = Direction.UP;
+                targetY         = (int)Player.getCentre().getY() - 40;
+                Moves++;
+            } else if (Controller.getInstance().isKeySPressed()) {
+                playerDirection = Direction.DOWN;
+                targetY         = (int)Player.getCentre().getY() + 40;
+                Moves++;
+            }
         }
 
         // if collision
@@ -192,7 +201,7 @@ public class Model {
     }
 
     public int getMoves() {
-        return moves;
+        return Moves;
     }
 
     public int getLives() {
