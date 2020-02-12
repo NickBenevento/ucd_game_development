@@ -43,11 +43,16 @@ import util.GameObject;
  */
 public class Viewer extends JPanel {
     private long CurrentAnimationTime = 0;
-
+    private char[][] grid;
     Model gameworld = new Model();
+    //BufferedImage background;
+    BackgroundGrid background;
+    //File TextureToLoad = new File("../res/iceblock.png");
 
     public Viewer(Model World) {
         this.gameworld = World;
+        background     = new BackgroundGrid();
+        background.setBounds(0, 0, 1000, 1000);
         // TODO Auto-generated constructor stub
     }
 
@@ -75,7 +80,6 @@ public class Viewer extends JPanel {
         super.paintComponent(g);
         CurrentAnimationTime++;         // runs animation time step
 
-
         //Draw player Game Object
         int    x       = (int)gameworld.getPlayer().getCentre().getX();
         int    y       = (int)gameworld.getPlayer().getCentre().getY();
@@ -87,57 +91,20 @@ public class Viewer extends JPanel {
         drawBackground(g);
 
         //Draw player
+
+        g.drawImage(background.background, 0, 0, null);
+
         drawPlayer(x, y, width, height, texture, g);
-
-        //Draw Bullets
-        // change back
-        gameworld.getBullets().forEach((temp)->
-        {
-            drawBullet((int)temp.getCentre().getX(), (int)temp.getCentre().getY(), (int)temp.getWidth(), (int)temp.getHeight(), temp.getTexture(), g);
-        });
-
-        //Draw Enemies
-        gameworld.getEnemies().forEach((temp)->
-        {
-            drawEnemies((int)temp.getCentre().getX(), (int)temp.getCentre().getY(), (int)temp.getWidth(), (int)temp.getHeight(), temp.getTexture(), g);
-        });
-    }
-
-    private void drawEnemies(int x, int y, int width, int height, String texture, Graphics g) {
-        File TextureToLoad = new File(texture);          //should work okay on OSX and Linux but check if you have issues depending your eclipse install or if your running this without an IDE
-
-        try {
-            Image myImage = ImageIO.read(TextureToLoad);
-            //The spirte is 32x32 pixel wide and 4 of them are placed together so we need to grab a different one each time
-            //remember your training :-) computer science everything starts at 0 so 32 pixels gets us to 31
-            int currentPositionInAnimation = ((int)(CurrentAnimationTime % 4) * 32);          //slows down animation so every 10 frames we get another frame so every 100ms
-            g.drawImage(myImage, x, y, x + width, y + width, currentPositionInAnimation, 0, currentPositionInAnimation + 31, 32, null);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        //background.repaint();
     }
 
     private void drawBackground(Graphics g) {
-        //File TextureToLoad = new File("../res/spacebackground.png");          //should work okay on OSX and Linux but check if you have issues depending your eclipse install or if your running this without an IDE
-		File TextureToLoad = new File("../res/ice_floor.png");
+        File background;
 
+        background = new File("../res/ice.jpg");
         try {
-            Image myImage = ImageIO.read(TextureToLoad);
-            g.drawImage(myImage, 0, 0, 1000, 1000, 0, 0, 1000, 1000, null);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    private void drawBullet(int x, int y, int width, int height, String texture, Graphics g) {
-        File TextureToLoad = new File(texture);          //should work okay on OSX and Linux but check if you have issues depending your eclipse install or if your running this without an IDE
-
-        try {
-            Image myImage = ImageIO.read(TextureToLoad);
-            //64 by 128
-            g.drawImage(myImage, x, y, x + width, y + width, 0, 0, 63, 127, null);
+            Image myImage = ImageIO.read(background);
+            g.drawImage(myImage, 0, 0, 1000, 1000, null);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -157,10 +124,64 @@ public class Viewer extends JPanel {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
 
-        //g.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, observer));
-        //Lighnting Png from https://opengameart.org/content/animated-spaceships  its 32x32 thats why I know to increament by 32 each time
-        // Bullets from https://opengameart.org/forumtopic/tatermands-art
-        // background image from https://www.needpix.com/photo/download/677346/space-stars-nebula-background-galaxy-universe-free-pictures-free-photos-free-images
+    public void setLevel(char[][] grid) {
+        this.grid = grid;
+
+        int x = 100;
+        int y = 100;
+
+        File TextureToLoad;
+
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (grid[i][j] == 'X') {
+                    //TextureToLoad = new File("../res/ice_block.png");
+                    TextureToLoad = new File("../res/iceblock.png");
+                } else if (grid[i][j] == 'B') {
+                    TextureToLoad = new File("../res/boulder.png");
+                } else if (grid[i][j] == 'O') {
+                    TextureToLoad = new File("../res/hole.png");
+                } else {
+                    System.out.println("grid char not recognized");
+                    TextureToLoad = new File("../res/blankSprite.png");
+                }
+
+                try {
+                    Image myImage = ImageIO.read(TextureToLoad);
+                    background.addSquare(myImage, x, y);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                x += 40;
+            }
+            y += 40;
+            x  = 100;
+        }
+    }
+
+    static class BackgroundGrid extends JPanel {
+        private final static int size = 1000;
+        private BufferedImage background;
+
+        public BackgroundGrid() {
+            background = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        }
+
+        public void addSquare(Image image, int x, int y) {
+            Graphics2D g = (Graphics2D)background.getGraphics();
+
+            g.drawImage(image, x, y, 40, 40, null);
+            repaint();
+        }
+
+        @Override
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            g.drawImage(background, 0, 0, null);
+        }
     }
 }

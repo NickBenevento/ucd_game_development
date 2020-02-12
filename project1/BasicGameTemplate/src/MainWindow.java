@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -50,7 +51,7 @@ public class MainWindow {
     private static JFrame frame = new JFrame("Game");           // Change to the name of your game
     private static Scoreboard scoreboard;                       // high scores for the game
     private static Model gameworld   = new Model();
-    private static Viewer canvas     = new  Viewer(gameworld);
+    private static Viewer canvas     = new Viewer(gameworld);
     private KeyListener Controller   = new Controller();
     private static int TargetFPS     = 100;
     private static boolean startGame = false;
@@ -58,39 +59,46 @@ public class MainWindow {
     private ButtonListener buttons;    // listener for pause/play button
     private JButton pause;             // button to resume the game
     private boolean isPaused = false;  // keep track of if the game is paused
-    private Timer timer;               // timer to control the updating of the game
+    private Timer timer;
     private static TimerListener timerListener;
 
     public MainWindow() {
+        char[][] Level1 = makeLevel();
+
         frame.setSize(1300, 1000);                            // you can customise this later and adapt it to change on size.
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //If exit // you can modify with your way of quitting , just is a template.
         frame.setLayout(null);
         //frame.setLayout(BorderLayout);
         frame.add(canvas);
         canvas.setBounds(0, 0, 1000, 1000);
-        canvas.setBackground(new Color(255, 255, 255)); //white background  replaced by Space background but if you remove the background method this will draw a white screen
-        canvas.setVisible(false);                       // this will become visible after you press the key.
 
+        //canvas.setBackground(new Color(255, 255, 255)); //white background  replaced by Space background but if you remove the background method this will draw a white screen
+        canvas.setVisible(false);                            // this will become visible after you press the key.
 
-        JButton startMenuButton = new JButton("Start Game");          // start button
+        JButton startMenuButton = new JButton("Start Game"); // start button
         startMenuButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 startMenuButton.setVisible(false);
                 BackgroundImageForStartMenu.setVisible(false);
                 canvas.setVisible(true);
+                //canvas.background.setVisible(true);
                 canvas.addKeyListener(Controller);                               //adding the controller to the Canvas
                 canvas.requestFocusInWindow();                                   // making sure that the Canvas is in focus so keyboard input will be taking in .
+                canvas.setLevel(Level1);
 
 
                 scoreboard = new Scoreboard();
-                buttons    = new ButtonListener();
-                pause      = new JButton("Pause");
+                //buttons    = new ButtonListener();
+                //pause      = new JButton("Pause");
 
-                pause.setFocusable(false);
-                pause.addActionListener(buttons);
+                //pause.setFocusable(false);
+                //pause.addActionListener(buttons);
+                //frame.add(canvas.background);
                 //pause.setPreferredSize(new Dimension(100, 30));
-
+                //canvas.add(background);
+                //background.setBounds(0, 0, 1000, 1000);
+                //frame.add(background);
                 //canvas.add(pause, BorderLayout.WEST);
                 //canvas.add(scoreboard);
                 frame.add(scoreboard);
@@ -155,6 +163,7 @@ public class MainWindow {
         // view update
 
         canvas.updateview();
+        //background.repaint();
 
         try {
             Thread.sleep(5);
@@ -172,12 +181,38 @@ public class MainWindow {
         //frame.setTitle("Moves =  " + gameworld.getScore());
     }
 
+    public char[][] makeLevel() {
+        char[][] level = {
+            { 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' }
+        };
+        return level;
+    }
+
     class TimerListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
             //Object e = event.getSource();
 
-            scoreboard.updateTime(100.0 / 1000.0);
+            scoreboard.updateTime(.10);
             //Toolkit.getDefaultToolkit().sync();
         }
     }
