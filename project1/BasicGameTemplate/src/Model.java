@@ -192,11 +192,6 @@ public class Model {
         int row = (((int)Player.getCentre().getY() - 56) / 40) - 1;
         int col = ((int)Player.getCentre().getX() - startX) / 40;
 
-        System.out.println("Row: " + row);
-        System.out.println("Col: " + col);
-        //for (int i = row; i < Level.length; i++) {
-
-        //}
         int i = row;
 
         if (d == Direction.LEFT) {
@@ -204,25 +199,79 @@ public class Model {
             if (col == 0) {
                 return;
             }
+
             do {
                 targetX -= 40;
                 col--;
-            } while (row > 0 && Level[row][col] == 'X');
+                // boulder check; want to stop 1 space before
+                if (col == 0) {
+                    break;
+                }
+                if (Level[row][col - 1] == 'B') {
+                    break;
+                }
+            } while (Level[row][col] == 'X');
         } else {
+            // Direction = RIGHT
             // bounds checking
-            if (col == Level.length - 1) {
+            if (col + 1 == Level.length) {
                 return;
             }
             do {
-                System.out.println("level: " + Level[row][col]);
                 targetX += 40;
                 col++;
-            } while (col < Level.length - 1 && Level[row][col] == 'X');
+                if (col == Level.length - 1) {
+                    break;
+                }
+                // boulder check; want to stop 1 space before
+                if (Level[row][col + 1] == 'B') {
+                    break;
+                }
+            } while (Level[row][col] == 'X');
         }
-        //while (
     }
 
     private void setTargetY(Direction d) {
+        int row = (((int)Player.getCentre().getY() - 56) / 40) - 1;
+        int col = ((int)Player.getCentre().getX() - startX) / 40;
+
+        int i = row;
+
+        if (d == Direction.UP) {
+            // bounds checking
+            if (row == 0) {
+                return;
+            }
+
+            do {
+                targetY -= 40;
+                row--;
+                // boulder check; want to stop 1 space before
+                if (row == 0) {
+                    break;
+                }
+                if (Level[row - 1][col] == 'B') {
+                    break;
+                }
+            } while (Level[row][col] == 'X');
+        } else {
+            // Direction: DOWN
+            // bounds checking
+            if (row + 1 == Level.length) {
+                return;
+            }
+            do {
+                targetY += 40;
+                row++;
+                if (row == Level.length - 1) {
+                    break;
+                }
+                // boulder check; want to stop 1 space before
+                if (Level[row + 1][col] == 'B') {
+                    break;
+                }
+            } while (Level[row][col] == 'X');
+        }
     }
 
     private void resetTargetPosition() {
