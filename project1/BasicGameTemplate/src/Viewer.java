@@ -139,6 +139,8 @@ public class Viewer extends JPanel {
                 if (grid[i][j] == 'X') {
                     //TextureToLoad = new File("../res/ice_block.png");
                     TextureToLoad = new File("../res/iceblock.png");
+                } else if (grid[i][j] == 'G') {
+                    TextureToLoad = new File("../res/ground.png");
                 } else if (grid[i][j] == 'B') {
                     TextureToLoad = new File("../res/boulder.png");
                 } else if (grid[i][j] == 'O') {

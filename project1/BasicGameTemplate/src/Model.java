@@ -35,11 +35,12 @@ public class Model {
     private Controller controller = Controller.getInstance();
     private CopyOnWriteArrayList <GameObject> EnemiesList = new CopyOnWriteArrayList <GameObject>();
     private CopyOnWriteArrayList <GameObject> BulletList  = new CopyOnWriteArrayList <GameObject>();
-    private int startX      = 86;
-    private int startY      = 855;
-    private int Score       = 0;
-    private int Lives       = 3;
-    private boolean sliding = false;
+    private char[][] Level;
+    private int startX = 86;
+    private int startY = 856;
+    private int Score  = 0;
+    private int Lives  = 3;
+    //private boolean sliding = false;
     private Direction playerDirection;
     private int Moves = 0;
     private int targetX;
@@ -60,6 +61,10 @@ public class Model {
         playerDirection = Direction.STILL;
         targetX         = startX;
         targetY         = startY;
+    }
+
+    public void setLevel(char[][] Level) {
+        this.Level = Level;
     }
 
     // This is the heart of the game , where the model takes in all the inputs ,decides the outcomes and then changes the model accordingly.
@@ -109,32 +114,32 @@ public class Model {
         if (Player.getCentre().getX() == targetX && Player.getCentre().getY() == targetY) {
             playerDirection = Direction.STILL;
         } else {
-            // animation of character is done by moving 40 pixels (to stay in line with the grid) in 8 different time steps (5 pixels each time until the character reaches the target square
+            // animation of character is done by moving 40 pixels (to stay in line with the grid) in 10 different time steps (4 pixels each time until the character reaches the target square
             switch (playerDirection)
             {
                 case LEFT:     // sliding left
-                    Player.getCentre().ApplyVector(new Vector3f(-5, 0, 0));
+                    Player.getCentre().ApplyVector(new Vector3f(-4, 0, 0));
                     if (Player.getCentre().getX() == 0) {
                         playerDirection = Direction.STILL;
                     }
                     break;
 
                 case RIGHT:     // sliding right
-                    Player.getCentre().ApplyVector(new Vector3f(5, 0, 0));
+                    Player.getCentre().ApplyVector(new Vector3f(4, 0, 0));
                     if (Player.getCentre().getX() == Player.getCentre().getBoundaryX()) {
                         playerDirection = Direction.STILL;
                     }
                     break;
 
                 case UP:     // sliding up
-                    Player.getCentre().ApplyVector(new Vector3f(0, 5, 0));
+                    Player.getCentre().ApplyVector(new Vector3f(0, 4, 0));
                     if (Player.getCentre().getY() == 0) {
                         playerDirection = Direction.STILL;
                     }
                     break;
 
                 case DOWN:     // sliding down
-                    Player.getCentre().ApplyVector(new Vector3f(0, -5, 0));
+                    Player.getCentre().ApplyVector(new Vector3f(0, -4, 0));
                     if (Player.getCentre().getY() == Player.getCentre().getBoundaryY()) {
                         playerDirection = Direction.STILL;
                     }
@@ -149,19 +154,23 @@ public class Model {
         if (playerDirection == Direction.STILL) {
             if (Controller.getInstance().isKeyAPressed()) {
                 playerDirection = Direction.LEFT;
-                targetX         = (int)Player.getCentre().getX() - 40;
+                setTargetX(Direction.LEFT);
+                //targetX         = (int)Player.getCentre().getX() - 40;
                 Moves++;
             } else if (Controller.getInstance().isKeyDPressed()) {
                 playerDirection = Direction.RIGHT;
-                targetX         = (int)Player.getCentre().getX() + 40;
+                setTargetX(Direction.RIGHT);
+                //targetX         = (int)Player.getCentre().getX() + 40;
                 Moves++;
             } else if (Controller.getInstance().isKeyWPressed()) {
                 playerDirection = Direction.UP;
-                targetY         = (int)Player.getCentre().getY() - 40;
+                setTargetY(Direction.UP);
+                //targetY         = (int)Player.getCentre().getY() - 40;
                 Moves++;
             } else if (Controller.getInstance().isKeySPressed()) {
                 playerDirection = Direction.DOWN;
-                targetY         = (int)Player.getCentre().getY() + 40;
+                setTargetY(Direction.DOWN);
+                //targetY         = (int)Player.getCentre().getY() + 40;
                 Moves++;
             }
         }
@@ -174,6 +183,100 @@ public class Model {
         //if (playerDirection != Direction.STILL && playerIsStopped()) {
         //    playerDirection = Direction.STILL;
         //}
+    }
+
+    /* calculating target position based on the type of ground
+     * in front of the player and the direction they want to move in
+     */
+    private void setTargetX(Direction d) {
+        int row = (((int)Player.getCentre().getY() - 56) / 40) - 1;
+        int col = ((int)Player.getCentre().getX() - startX) / 40;
+
+        int i = row;
+
+        if (d == Direction.LEFT) {
+            // bounds checking
+            if (col == 0) {
+                return;
+            }
+
+            do {
+                targetX -= 40;
+                col--;
+                // boulder check; want to stop 1 space before
+                if (col == 0) {
+                    break;
+                }
+                if (Level[row][col - 1] == 'B') {
+                    break;
+                }
+            } while (Level[row][col] == 'X');
+        } else {
+            // Direction = RIGHT
+            // bounds checking
+            if (col + 1 == Level.length) {
+                return;
+            }
+            do {
+                targetX += 40;
+                col++;
+                if (col == Level.length - 1) {
+                    break;
+                }
+                // boulder check; want to stop 1 space before
+                if (Level[row][col + 1] == 'B') {
+                    break;
+                }
+            } while (Level[row][col] == 'X');
+        }
+    }
+
+    private void setTargetY(Direction d) {
+        int row = (((int)Player.getCentre().getY() - 56) / 40) - 1;
+        int col = ((int)Player.getCentre().getX() - startX) / 40;
+
+        int i = row;
+
+        if (d == Direction.UP) {
+            // bounds checking
+            if (row == 0) {
+                return;
+            }
+
+            do {
+                targetY -= 40;
+                row--;
+                // boulder check; want to stop 1 space before
+                if (row == 0) {
+                    break;
+                }
+                if (Level[row - 1][col] == 'B') {
+                    break;
+                }
+            } while (Level[row][col] == 'X');
+        } else {
+            // Direction: DOWN
+            // bounds checking
+            if (row + 1 == Level.length) {
+                return;
+            }
+            do {
+                targetY += 40;
+                row++;
+                if (row == Level.length - 1) {
+                    break;
+                }
+                // boulder check; want to stop 1 space before
+                if (Level[row + 1][col] == 'B') {
+                    break;
+                }
+            } while (Level[row][col] == 'X');
+        }
+    }
+
+    private void resetTargetPosition() {
+        targetX = (int)Player.getCentre().getX();
+        targetY = (int)Player.getCentre().getY();
     }
 
     //private boolean playerIsStopped() {
