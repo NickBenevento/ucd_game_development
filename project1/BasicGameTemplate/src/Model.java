@@ -196,7 +196,7 @@ public class Model {
 
         if (d == Direction.LEFT) {
             // bounds checking
-            if (col == 0) {
+            if (col == 0 || Level[row][col - 1] == 'B') {
                 return;
             }
 
@@ -214,13 +214,13 @@ public class Model {
         } else {
             // Direction = RIGHT
             // bounds checking
-            if (col + 1 == Level.length) {
+            if (col + 1 == Level[row].length || Level[row][col + 1] == 'B') {
                 return;
             }
             do {
                 targetX += 40;
                 col++;
-                if (col == Level.length - 1) {
+                if (col == Level[row].length - 1) {
                     break;
                 }
                 // boulder check; want to stop 1 space before
@@ -239,7 +239,7 @@ public class Model {
 
         if (d == Direction.UP) {
             // bounds checking
-            if (row == 0) {
+            if (row == 0 || Level[row - 1][col] == 'B') {
                 return;
             }
 
@@ -257,7 +257,7 @@ public class Model {
         } else {
             // Direction: DOWN
             // bounds checking
-            if (row + 1 == Level.length) {
+            if (row + 1 == Level.length || Level[row + 1][col] == 'B') {
                 return;
             }
             do {
