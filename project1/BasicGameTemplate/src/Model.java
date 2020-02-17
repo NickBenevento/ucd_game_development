@@ -36,11 +36,11 @@ public class Model {
     private CopyOnWriteArrayList <GameObject> EnemiesList = new CopyOnWriteArrayList <GameObject>();
     private CopyOnWriteArrayList <GameObject> BulletList  = new CopyOnWriteArrayList <GameObject>();
     private char[][] Level;
-    private int startX = 86;
-    private int startY = 856;
-    private int Score  = 0;
-    private int Lives  = 3;
-    //private boolean sliding = false;
+    private int cellSize = 40;
+    private int startX   = 86;
+    private int startY   = 856;
+    private int Score    = 0;
+    private int Lives    = 3;
     private Direction playerDirection;
     private int Moves = 0;
     private int targetX;
@@ -113,36 +113,35 @@ public class Model {
     private void playerLogic() {
         if (Player.getCentre().getX() == targetX && Player.getCentre().getY() == targetY) {
             playerDirection = Direction.STILL;
+            // check if player is at finish tile or fell in a hole
+            int row = (((int)Player.getCentre().getY() - 56) / 40) - 1;
+            int col = ((int)Player.getCentre().getX() - startX) / 40;
+            if (Level[row][col] == 'F') {
+                System.out.println("You won!");
+                resetTargetPosition();
+            } else if (Level[row][col] == 'O') {
+                Player.getCentre().setX(startX);
+                Player.getCentre().setY(startY);
+                resetTargetPosition();
+            }
         } else {
             // animation of character is done by moving 40 pixels (to stay in line with the grid) in 10 different time steps (4 pixels each time until the character reaches the target square
             switch (playerDirection)
             {
-                case LEFT:     // sliding left
+                case LEFT:
                     Player.getCentre().ApplyVector(new Vector3f(-4, 0, 0));
-                    if (Player.getCentre().getX() == 0) {
-                        playerDirection = Direction.STILL;
-                    }
                     break;
 
-                case RIGHT:     // sliding right
+                case RIGHT:
                     Player.getCentre().ApplyVector(new Vector3f(4, 0, 0));
-                    if (Player.getCentre().getX() == Player.getCentre().getBoundaryX()) {
-                        playerDirection = Direction.STILL;
-                    }
                     break;
 
-                case UP:     // sliding up
+                case UP:
                     Player.getCentre().ApplyVector(new Vector3f(0, 4, 0));
-                    if (Player.getCentre().getY() == 0) {
-                        playerDirection = Direction.STILL;
-                    }
                     break;
 
-                case DOWN:     // sliding down
+                case DOWN:
                     Player.getCentre().ApplyVector(new Vector3f(0, -4, 0));
-                    if (Player.getCentre().getY() == Player.getCentre().getBoundaryY()) {
-                        playerDirection = Direction.STILL;
-                    }
                     break;
 
                 default:        // still
@@ -155,34 +154,21 @@ public class Model {
             if (Controller.getInstance().isKeyAPressed()) {
                 playerDirection = Direction.LEFT;
                 setTargetX(Direction.LEFT);
-                //targetX         = (int)Player.getCentre().getX() - 40;
                 Moves++;
             } else if (Controller.getInstance().isKeyDPressed()) {
                 playerDirection = Direction.RIGHT;
                 setTargetX(Direction.RIGHT);
-                //targetX         = (int)Player.getCentre().getX() + 40;
                 Moves++;
             } else if (Controller.getInstance().isKeyWPressed()) {
                 playerDirection = Direction.UP;
                 setTargetY(Direction.UP);
-                //targetY         = (int)Player.getCentre().getY() - 40;
                 Moves++;
             } else if (Controller.getInstance().isKeySPressed()) {
                 playerDirection = Direction.DOWN;
                 setTargetY(Direction.DOWN);
-                //targetY         = (int)Player.getCentre().getY() + 40;
                 Moves++;
             }
         }
-
-        // if collision
-        //	player direction = still
-
-
-        // check if the player hit an obstacle
-        //if (playerDirection != Direction.STILL && playerIsStopped()) {
-        //    playerDirection = Direction.STILL;
-        //}
     }
 
     /* calculating target position based on the type of ground
@@ -207,7 +193,7 @@ public class Model {
                 if (col == 0) {
                     break;
                 }
-                if (Level[row][col - 1] == 'B') {
+                if (Level[row][col - 1] == 'B' || Level[row][col - 1] == 'T') {
                     break;
                 }
             } while (Level[row][col] == 'X');
@@ -224,7 +210,7 @@ public class Model {
                     break;
                 }
                 // boulder check; want to stop 1 space before
-                if (Level[row][col + 1] == 'B') {
+                if (Level[row][col + 1] == 'B' || Level[row][col + 1] == 'T') {
                     break;
                 }
             } while (Level[row][col] == 'X');
@@ -232,8 +218,8 @@ public class Model {
     }
 
     private void setTargetY(Direction d) {
-        int row = (((int)Player.getCentre().getY() - 56) / 40) - 1;
-        int col = ((int)Player.getCentre().getX() - startX) / 40;
+        int row = (((int)Player.getCentre().getY() - 56) / cellSize) - 1;
+        int col = ((int)Player.getCentre().getX() - startX) / cellSize;
 
         int i = row;
 
@@ -250,7 +236,7 @@ public class Model {
                 if (row == 0) {
                     break;
                 }
-                if (Level[row - 1][col] == 'B') {
+                if (Level[row - 1][col] == 'B' || Level[row - 1][col] == 'T') {
                     break;
                 }
             } while (Level[row][col] == 'X');
@@ -267,7 +253,7 @@ public class Model {
                     break;
                 }
                 // boulder check; want to stop 1 space before
-                if (Level[row + 1][col] == 'B') {
+                if (Level[row + 1][col] == 'B' || Level[row + 1][col] == 'T') {
                     break;
                 }
             } while (Level[row][col] == 'X');
