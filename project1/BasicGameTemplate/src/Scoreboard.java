@@ -1,42 +1,44 @@
-/**
- * CSCI 2113 - Project 2 - Alien Attack
- *
- * @author Nick Benevento
- *
- */
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
 import java.awt.*;
+import javax.swing.JButton;
 import java.util.ArrayList;
 import java.io.*;
 import java.text.DecimalFormat;
+import util.GameObject;
 
 public class Scoreboard extends JPanel {
+    //private GameObject player;
+    private Model gameworld;
+    private JButton save;
+    private ButtonListener saveListener;
     private JTextArea high_scores; /* displays the top 10 scores of all time */
     private JLabel Moves;
     private JLabel Time;
-    //private int currentScore;
-    //private int currentMoves;
     private double elapsedTime;
+    private int moves;
+    private int level;
     ArrayList <String> score_list;
     DecimalFormat d2 = new DecimalFormat("0.0");
 
-    public Scoreboard() {
+    public Scoreboard(Model gameworld) {
+        this.gameworld = gameworld;
+
+        save         = new JButton("Save Game");
+        saveListener = new ButtonListener();
+        save.addActionListener(saveListener);
+
+
         /* start with 0 */
-        //currentScore = 0;
         elapsedTime = 0;
         score_list  = new ArrayList <String>();
         /* sets the font */
-        Font scores = new Font("SansSerif", Font.BOLD, 28);
-        //high_scores = new JTextArea("High Scores:\n\n");
-        //updateScores();
-        //high_scores.setFont(scores);
-        //high_scores.setPreferredSize(new Dimension(200, 100));
-        //high_scores.setEditable(false);
-        Color back = getBackground();
-        //high_scores.setBackground(back);
+        Font  scores = new Font("SansSerif", Font.BOLD, 28);
+        Color back   = getBackground();
 
-        //Score = new JLabel("Score: " + currentScore);
-        Moves = new JLabel("Moves: ");
+        moves = 0;
+        Moves = new JLabel("Moves: " + moves);
         Moves.setPreferredSize(new Dimension(150, 50));
         Moves.setAlignmentX(CENTER_ALIGNMENT);
         Time = new JLabel("Time: " + d2.format(elapsedTime));
@@ -49,118 +51,69 @@ public class Scoreboard extends JPanel {
 
         /* setting the layout and adding the lables to the panel */
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        //add(high_scores);
         add(Moves);
         add(Time);
+        add(save);
     }
-
-    //public void updateScores() {
-    //    /* clears the arraylist from previous scores */
-    //    score_list.clear();
-    //    readScores(); /* reads in the new scores */
-    //    high_scores.setText("High Scores:\n\n");
-    //    /* displays the new high scores */
-    //    for (int i = 0; i < score_list.size(); i++) {
-    //        high_scores.setText(high_scores.getText() + score_list.get(i) + "\n");
-    //    }
-    //}
 
     public void updateTime(double time) {
         elapsedTime += time;
         Time.setText("Time: " + d2.format(elapsedTime) + "s");
     }
 
-    //public void addPoints(int points) {
-    //    currentScore += points;
-    //    Score.setText("Score: " + currentScore);
-    //}
-
-    public void updateMoves(int moves) {
-        Moves.setText("Moves: " + moves);
+    public void setLevel(int level) {
+        this.level = level;
     }
 
-    public void addTime(double time) {
-        elapsedTime += time;
-        Time.setText("Time: " + d2.format(elapsedTime));
+    public void setMoves(int moves) {
+        this.moves = moves;
+        Moves.setText("Moves: " + this.moves);
     }
 
     public double getTime() {
         return elapsedTime;
     }
 
-    public void setTime(int time) {
+    public void setTime(double time) {
         elapsedTime = time;
         Time.setText("Time: " + d2.format(elapsedTime));
     }
 
-    //public int getScore() {
-    //    return currentScore;
-    //}
+    public int getMoves() {
+        return moves;
+    }
 
-    //public void setScore(int score) {
-    //    currentScore = score;
-    //    Score.setText("Score: " + currentScore);
-    //}
-
-    public void readScores() {
-        String filename = "high_scores.txt";
+    public void saveGame() {
+        String filename = "save.txt";
+        int    x        = (int)gameworld.getPlayer().getCentre().getX();
+        int    y        = (int)gameworld.getPlayer().getCentre().getY();
 
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(filename));
-            String         str;
-            /* reads the scores into the arraylist */
-            while ((str = reader.readLine()) != null) {
-                score_list.add(str);
-            }
-            reader.close();
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+            writer.write(level + "\n");
+            writer.write(moves + "\n");
+            writer.write(d2.format(elapsedTime) + "\n");
+            writer.write(x + "\n");
+            writer.write(y + "\n");
+            writer.close();
         } catch (IOException e) {
-            System.out.println("the file could not be read");
+            System.out.println("The file could not be written");
         }
     }
 
-    //public void putScore() {
-    //    String filename = "high_scores.txt";
-    //    int    index    = -1;
-    //    int    count    = 0;
-    //    int    check    = 0; /* makes sure the score is put in the top-most position of the list */
+    public void loadGame() {
+    }
 
-    //    for (int i = 0; i < score_list.size(); i++) {
-    //        int array_score = Integer.parseInt(score_list.get(i));
-    //        /* checks if the current score is greater than the score in the file */
-    //        if (currentScore > array_score && check != 1) {
-    //            index = count;         /* set the index */
-    //            check = 1;
-    //        }
-    //        count++;
-    //    }
-    //    /* if it is the first score, just add it to the file */
-    //    if (score_list.size() == 0) {
-    //        index = 0;
-    //    }
-    //    /* if the scores are less than 10, add it to the end */
-    //    else if (count < 10) {
-    //        index = count;
-    //    }
-
-    //    /* if the score needs to be added to the list */
-    //    if (index != -1) {
-    //        try{
-    //            JOptionPane.showMessageDialog(null, "You made it on the leaderboard!", "Congratulations!", JOptionPane.OK_OPTION);
-    //            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-    //            /* if the lsit is full, remove the lowest score */
-    //            if (score_list.size() == 10) {
-    //                score_list.remove(score_list.size() - 1);
-    //            }
-    //            /* add the score to the list */
-    //            score_list.add(index, Integer.toString(currentScore));
-    //            /* write the new scores to the file */
-    //            for (int i = 0; i < score_list.size(); i++) {
-    //                writer.write(score_list.get(i) + "\n");
-    //            }
-    //            writer.close();
-    //        } catch (IOException e) {
-    //            System.out.println("The file could not be written");
-    //        }
-    //    }
-    //}
+    class ButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            //Object e = event.getSource();
+            // the player can only save while they are still --> prevents exploits from saving/loading
+            if (gameworld.getDirection() == Model.Direction.STILL) {
+                saveGame();
+            } else {
+                JOptionPane.showMessageDialog(null, "You can't save the game while sliding!", "Save Error!", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
 }

@@ -45,6 +45,7 @@ public class Model {
     private int Moves = 0;
     private int targetX;
     private int targetY;
+    //private int hole = -1; // want to draw a black screen for 3 frames if the player falls in a hole
 
     enum Direction {
         LEFT,
@@ -125,23 +126,23 @@ public class Model {
                 resetTargetPosition();
             }
         } else {
-            // animation of character is done by moving 40 pixels (to stay in line with the grid) in 10 different time steps (4 pixels each time until the character reaches the target square
+            // animation of character is done by moving 40 pixels (to stay in line with the grid) in 5 different time steps (8 pixels each time until the character reaches the target square
             switch (playerDirection)
             {
                 case LEFT:
-                    Player.getCentre().ApplyVector(new Vector3f(-4, 0, 0));
+                    Player.getCentre().ApplyVector(new Vector3f(-8, 0, 0));
                     break;
 
                 case RIGHT:
-                    Player.getCentre().ApplyVector(new Vector3f(4, 0, 0));
+                    Player.getCentre().ApplyVector(new Vector3f(8, 0, 0));
                     break;
 
                 case UP:
-                    Player.getCentre().ApplyVector(new Vector3f(0, 4, 0));
+                    Player.getCentre().ApplyVector(new Vector3f(0, 8, 0));
                     break;
 
                 case DOWN:
-                    Player.getCentre().ApplyVector(new Vector3f(0, -4, 0));
+                    Player.getCentre().ApplyVector(new Vector3f(0, -8, 0));
                     break;
 
                 default:        // still
@@ -153,19 +154,19 @@ public class Model {
         if (playerDirection == Direction.STILL) {
             if (Controller.getInstance().isKeyAPressed()) {
                 playerDirection = Direction.LEFT;
-                setTargetX(Direction.LEFT);
+                setTargetX();
                 Moves++;
             } else if (Controller.getInstance().isKeyDPressed()) {
                 playerDirection = Direction.RIGHT;
-                setTargetX(Direction.RIGHT);
+                setTargetX();
                 Moves++;
             } else if (Controller.getInstance().isKeyWPressed()) {
                 playerDirection = Direction.UP;
-                setTargetY(Direction.UP);
+                setTargetY();
                 Moves++;
             } else if (Controller.getInstance().isKeySPressed()) {
                 playerDirection = Direction.DOWN;
-                setTargetY(Direction.DOWN);
+                setTargetY();
                 Moves++;
             }
         }
@@ -174,15 +175,15 @@ public class Model {
     /* calculating target position based on the type of ground
      * in front of the player and the direction they want to move in
      */
-    private void setTargetX(Direction d) {
+    private void setTargetX() {
         int row = (((int)Player.getCentre().getY() - 56) / 40) - 1;
         int col = ((int)Player.getCentre().getX() - startX) / 40;
 
         int i = row;
 
-        if (d == Direction.LEFT) {
+        if (playerDirection == Direction.LEFT) {
             // bounds checking
-            if (col == 0 || Level[row][col - 1] == 'B') {
+            if (col == 0 || Level[row][col - 1] == 'B' || Level[row][col - 1] == 'T') {
                 return;
             }
 
@@ -200,7 +201,7 @@ public class Model {
         } else {
             // Direction = RIGHT
             // bounds checking
-            if (col + 1 == Level[row].length || Level[row][col + 1] == 'B') {
+            if (col + 1 == Level[row].length || Level[row][col + 1] == 'B' || Level[row][col + 1] == 'T') {
                 return;
             }
             do {
@@ -217,15 +218,15 @@ public class Model {
         }
     }
 
-    private void setTargetY(Direction d) {
+    private void setTargetY() {
         int row = (((int)Player.getCentre().getY() - 56) / cellSize) - 1;
         int col = ((int)Player.getCentre().getX() - startX) / cellSize;
 
         int i = row;
 
-        if (d == Direction.UP) {
+        if (playerDirection == Direction.UP) {
             // bounds checking
-            if (row == 0 || Level[row - 1][col] == 'B') {
+            if (row == 0 || Level[row - 1][col] == 'B' || Level[row - 1][col] == 'T') {
                 return;
             }
 
@@ -243,7 +244,7 @@ public class Model {
         } else {
             // Direction: DOWN
             // bounds checking
-            if (row + 1 == Level.length || Level[row + 1][col] == 'B') {
+            if (row + 1 == Level.length || Level[row + 1][col] == 'B' || Level[row + 1][col] == 'T') {
                 return;
             }
             do {
@@ -260,25 +261,17 @@ public class Model {
         }
     }
 
-    private void resetTargetPosition() {
+    public void resetTargetPosition() {
         targetX = (int)Player.getCentre().getX();
         targetY = (int)Player.getCentre().getY();
     }
 
-    //private boolean playerIsStopped() {
-    //    float x        = Player.getCentre().getX();
-    //    float y        = Player.getCentre().getY();
-    //    int   boundary = Player.getCentre().getBoundary();
-
-    //    if (x == boundary || y == boundary || x == 0 || y == 0) {
-    //        //playerDirection = Direction.STILL;
-    //        return true;
-    //    }
-    //    return false;
-    //}
-
     public GameObject getPlayer() {
         return Player;
+    }
+
+    public Direction getDirection() {
+        return playerDirection;
     }
 
     public CopyOnWriteArrayList <GameObject> getEnemies() {
@@ -291,6 +284,10 @@ public class Model {
 
     public int getMoves() {
         return Moves;
+    }
+
+    public void setMoves(int moves) {
+        this.Moves = moves;
     }
 
     public int getLives() {

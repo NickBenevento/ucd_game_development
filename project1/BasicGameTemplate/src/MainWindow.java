@@ -17,7 +17,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import javax.swing.JOptionPane;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import util.UnitTests;
 
 /*
@@ -56,99 +59,75 @@ public class MainWindow {
     private static int TargetFPS     = 100;
     private static boolean startGame = false;
     private JLabel BackgroundImageForStartMenu;
-    private ButtonListener buttons;    // listener for pause/play button
-    private JButton pause;             // button to resume the game
-    private boolean isPaused = false;  // keep track of if the game is paused
+    private JButton startMenuButton;
+    private ButtonListener buttonListener; // listener for pause/play button
+    private JButton load;                  // button to load a previous game
+    private JButton pause;                 // button to resume the game
+    private boolean isPaused = false;      // keep track of if the game is paused
+    char[][] Level1;
     private Timer timer;
     private static TimerListener timerListener;
+    private int cycleTime = 10;
 
     public MainWindow() {
-        char[][] Level1 = makeLevel();
+        //char[][] Level1 = makeLevel();
+        Level1 = makeLevel2();
         gameworld.setLevel(Level1);
 
-        frame.setSize(1300, 1000);                            // you can customise this later and adapt it to change on size.
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //If exit // you can modify with your way of quitting , just is a template.
+        frame.setSize(1300, 1000);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
-        //frame.setLayout(BorderLayout);
         frame.add(canvas);
         canvas.setBounds(0, 0, 1000, 1000);
 
-        //canvas.setBackground(new Color(255, 255, 255)); //white background  replaced by Space background but if you remove the background method this will draw a white screen
-        canvas.setVisible(false);                            // this will become visible after you press the key.
-
-        JButton startMenuButton = new JButton("Start Game"); // start button
-        startMenuButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                startMenuButton.setVisible(false);
-                BackgroundImageForStartMenu.setVisible(false);
-                canvas.setVisible(true);
-                //canvas.background.setVisible(true);
-                canvas.addKeyListener(Controller);                               //adding the controller to the Canvas
-                canvas.requestFocusInWindow();                                   // making sure that the Canvas is in focus so keyboard input will be taking in .
-                canvas.setLevel(Level1);
-
-
-                scoreboard = new Scoreboard();
-                //buttons    = new ButtonListener();
-                //pause      = new JButton("Pause");
-
-                //pause.setFocusable(false);
-                //pause.addActionListener(buttons);
-                //frame.add(canvas.background);
-                //pause.setPreferredSize(new Dimension(100, 30));
-                //canvas.add(background);
-                //background.setBounds(0, 0, 1000, 1000);
-                //frame.add(background);
-                //canvas.add(pause, BorderLayout.WEST);
-                //canvas.add(scoreboard);
-                frame.add(scoreboard);
-                timerListener = new TimerListener();
-                timer         = new Timer(100, timerListener); // timer listener will fire every 100 milliseconds
-                timer.start();
-                scoreboard.setBounds(1000, 0, 300, 500);
-
-                startGame = true;
-            }
-        });
-        startMenuButton.setBounds(400, 500, 200, 40);
+        canvas.setVisible(false);                           // this will become visible after you press the key.
 
         //loading background image
         File BackroundToLoad = new File("../res/startscreen.png");          //should work okay on OSX and Linux but check if you have issues depending your eclipse install or if your running this without an IDE
-        try {
-            BufferedImage myPicture = ImageIO.read(BackroundToLoad);
-            BackgroundImageForStartMenu = new JLabel(new ImageIcon(myPicture));
-            BackgroundImageForStartMenu.setBounds(0, 0, 1000, 1000);
-            frame.add(BackgroundImageForStartMenu);
-        }  catch (IOException e) {
-            e.printStackTrace();
-        }
+        //try {
+        //    BufferedImage myPicture = ImageIO.read(BackroundToLoad);
+        //    BackgroundImageForStartMenu = new JLabel(new ImageIcon(myPicture));
+        //    BackgroundImageForStartMenu.setBounds(0, 0, 1000, 1000);
+        //    frame.add(BackgroundImageForStartMenu);
+        //}  catch (IOException e) {
+        //    e.printStackTrace();
+        //}
 
-        frame.add(startMenuButton);
+        buttonListener  = new ButtonListener();
+        startMenuButton = new JButton("Start Game");        // start button
+        startMenuButton.addActionListener(buttonListener);
+
+        load = new JButton("Load Game");
+        load.addActionListener(buttonListener);
+        load.setBounds(300, 500, 200, 40);
+        startMenuButton.setBounds(600, 500, 200, 40);
+
         frame.setVisible(true);
+        frame.add(load);
+        frame.add(startMenuButton);
     }
 
     public static void main(String[] args) {
         MainWindow hello = new MainWindow(); //sets up environment
 
-        while (true) {                       //not nice but remember we do just want to keep looping till the end.  // this could be replaced by a thread but again we want to keep things simple
-            //swing has timer class to help us time this but I'm writing my own, you can of course use the timer, but I want to set FPS and display it
+        //while (true) {                       //not nice but remember we do just want to keep looping till the end.  // this could be replaced by a thread but again we want to keep things simple
+        //    //swing has timer class to help us time this but I'm writing my own, you can of course use the timer, but I want to set FPS and display it
 
-            int  TimeBetweenFrames = 1000 / TargetFPS;
-            long FrameCheck        = System.currentTimeMillis() + (long)TimeBetweenFrames;
+        //    int  TimeBetweenFrames = 1000 / TargetFPS;
+        //    long FrameCheck        = System.currentTimeMillis() + (long)TimeBetweenFrames;
 
-            //wait till next time step
-            while (FrameCheck > System.currentTimeMillis()) {
-            }
+        //    //wait till next time step
+        //    while (FrameCheck > System.currentTimeMillis()) {
+        //    }
 
 
-            if (startGame) {
-                gameloop();
-            }
+        //    if (startGame) {
+        //        gameloop();
+        //    }
 
-            //UNIT test to see if framerate matches
-            //UnitTests.CheckFrameRate(System.currentTimeMillis(), FrameCheck, TargetFPS);
-        }
+        //    //UNIT test to see if framerate matches
+        //    //UnitTests.CheckFrameRate(System.currentTimeMillis(), FrameCheck, TargetFPS);
+        //}
     }
 
     //Basic Model-View-Controller pattern
@@ -165,46 +144,18 @@ public class MainWindow {
         canvas.updateview();
         //background.repaint();
 
-        try {
-            Thread.sleep(5);
-        } catch (InterruptedException e) {
-            System.out.println("Interruped Exception!");
-        }
+        //try {
+        //    Thread.sleep(5);
+        //} catch (InterruptedException e) {
+        //    System.out.println("Interruped Exception!");
+        //}
 
-        scoreboard.updateMoves(gameworld.getMoves());
-        Toolkit.getDefaultToolkit().sync();
+        scoreboard.setMoves(gameworld.getMoves());
+        //Toolkit.getDefaultToolkit().sync();
         // Both these calls could be setup as  a thread but we want to simplify the game logic for you.
         //score update
         //frame.setTitle("Score =  " + gameworld.getScore());
         //frame.setTitle("Moves =  " + gameworld.getScore());
-    }
-
-    public char[][] makeLevel() {
-        // T for transparent, X for ice, B for boulder, O for hole, F for finish (exit)
-        char[][] level = {
-            { 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'T', 'T', 'T' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'O', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'G', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'G', 'X', 'X', 'B', 'B', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'G', 'G', 'B', 'B', 'G', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'G', 'G', 'G', 'G', 'G', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B' }
-        };
-        return level;
     }
 
     class TimerListener implements ActionListener {
@@ -212,7 +163,8 @@ public class MainWindow {
         public void actionPerformed(ActionEvent event) {
             //Object e = event.getSource();
 
-            scoreboard.updateTime(.10);
+            gameloop();
+            scoreboard.updateTime(((double)cycleTime) / 100.0);
             //Toolkit.getDefaultToolkit().sync();
         }
     }
@@ -222,7 +174,44 @@ public class MainWindow {
         public void actionPerformed(ActionEvent event) {
             Object e = event.getSource();
 
-            if (e == pause) {
+            if (e == startMenuButton) {
+                setUpGame();
+            } else if (e == load) {
+                setUpGame();
+                try {
+                    BufferedReader reader = new BufferedReader(new FileReader("save.txt"));
+                    String         str;
+                    /* reads the scores into the arraylist */
+                    str = reader.readLine();
+                    int level = Integer.parseInt(str);
+                    System.out.println("level: " + level);
+                    str = reader.readLine();
+                    if (str == null) {
+                        System.out.println("str is null");
+                    }
+                    int moves = Integer.parseInt(str);
+                    System.out.println("moves: " + moves);
+                    scoreboard.setMoves(moves);
+                    gameworld.setMoves(moves);
+                    str = reader.readLine();
+                    System.out.println("time: " + str);
+                    double time = Double.parseDouble(str);
+                    scoreboard.setTime(time);
+                    str = reader.readLine();
+                    int x = Integer.parseInt(str);
+                    gameworld.getPlayer().getCentre().setX(x);
+                    str = reader.readLine();
+                    int y = Integer.parseInt(str);
+                    gameworld.getPlayer().getCentre().setY(y);
+
+                    gameworld.resetTargetPosition();
+
+                    reader.close();
+                } catch (IOException exc) {
+                    //System.out.println("No save file found");
+                    JOptionPane.showMessageDialog(null, "No save file found!", "Load Error!", JOptionPane.ERROR_MESSAGE);
+                }
+            } else if (e == pause) {
                 /* if the button was clicked and the game is not paused, pause the game */
                 if (!isPaused) {
                     pause.setText("Play");
@@ -239,5 +228,90 @@ public class MainWindow {
             //    dispose();
             //}
         }
+    }
+
+    public void setUpGame() {
+        startMenuButton.setVisible(false);
+        //BackgroundImageForStartMenu.setVisible(false);
+        canvas.setVisible(true);
+        //canvas.background.setVisible(true);
+        canvas.addKeyListener(Controller);                                       //adding the controller to the Canvas
+        canvas.requestFocusInWindow();                                           // making sure that the Canvas is in focus so keyboard input will be taking in .
+        canvas.setLevel(Level1);
+
+
+        scoreboard = new Scoreboard(gameworld);
+        //buttons    = new ButtonListener();
+        //pause      = new JButton("Pause");
+
+        //pause.setFocusable(false);
+        //pause.addActionListener(buttons);
+        //frame.add(canvas.background);
+        //pause.setPreferredSize(new Dimension(100, 30));
+        //canvas.add(background);
+        //background.setBounds(0, 0, 1000, 1000);
+        //frame.add(background);
+        //canvas.add(pause, BorderLayout.WEST);
+        //canvas.add(scoreboard);
+        frame.add(scoreboard);
+        timerListener = new TimerListener();
+        timer         = new Timer(cycleTime, timerListener);         // timer listener will fire every 100 milliseconds
+        timer.start();
+        scoreboard.setBounds(1000, 0, 300, 500);
+        startGame = true;
+    }
+
+    public char[][] makeLevel() {
+        // T for transparent, X for ice, B for boulder, O for hole, F for finish (exit)
+        char[][] level = {
+            { 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'T', 'T', 'T' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'O', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'G', 'X', 'X', 'B', 'B', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'G', 'G', 'B', 'B', 'G', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'G', 'G', 'G', 'G', 'G', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B' }
+        };
+        return level;
+    }
+
+    public char[][] makeLevel2() {
+        // T for transparent, X for ice, B for boulder, O for hole, F for finish (exit)
+        char[][] level = {
+            { 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'B', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'O', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'O', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X' },
+            { 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'O' },
+            { 'X', 'O', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'B', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'B', 'B', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X' },
+            { 'G', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' }
+        };
+        return level;
     }
 }
