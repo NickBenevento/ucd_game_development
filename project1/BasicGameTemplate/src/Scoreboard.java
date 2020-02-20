@@ -10,9 +10,8 @@ import util.GameObject;
 
 public class Scoreboard extends JPanel {
     //private GameObject player;
-    private Model gameworld;
-    private JButton save;
-    private ButtonListener saveListener;
+    //private Model gameworld;
+    //private ButtonListener saveListener;
     private JTextArea high_scores; /* displays the top 10 scores of all time */
     private JLabel Moves;
     private JLabel Time;
@@ -22,13 +21,10 @@ public class Scoreboard extends JPanel {
     ArrayList <String> score_list;
     DecimalFormat d2 = new DecimalFormat("0.0");
 
-    public Scoreboard(Model gameworld) {
-        this.gameworld = gameworld;
+    public Scoreboard() {
+        //this.gameworld = gameworld;
 
-        save         = new JButton("Save Game");
-        saveListener = new ButtonListener();
-        save.addActionListener(saveListener);
-
+        // add label with current level
 
         /* start with 0 */
         elapsedTime = 0;
@@ -53,7 +49,7 @@ public class Scoreboard extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         add(Moves);
         add(Time);
-        add(save);
+        //add(save);
     }
 
     public void updateTime(double time) {
@@ -83,10 +79,8 @@ public class Scoreboard extends JPanel {
         return moves;
     }
 
-    public void saveGame() {
+    public void saveGame(int x, int y) {
         String filename = "save.txt";
-        int    x        = (int)gameworld.getPlayer().getCentre().getX();
-        int    y        = (int)gameworld.getPlayer().getCentre().getY();
 
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
@@ -104,16 +98,16 @@ public class Scoreboard extends JPanel {
     public void loadGame() {
     }
 
-    class ButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent event) {
-            //Object e = event.getSource();
-            // the player can only save while they are still --> prevents exploits from saving/loading
-            if (gameworld.getDirection() == Model.Direction.STILL) {
-                saveGame();
-            } else {
-                JOptionPane.showMessageDialog(null, "You can't save the game while sliding!", "Save Error!", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
+    //class ButtonListener implements ActionListener {
+    //    @Override
+    //    public void actionPerformed(ActionEvent event) {
+    //        //Object e = event.getSource();
+    //        // the player can only save while they are still --> prevents exploits from saving/loading
+    //        if (gameworld.getDirection() == Model.Direction.STILL) {
+    //            saveGame();
+    //        } else {
+    //            JOptionPane.showMessageDialog(null, "You can't save the game while sliding!", "Save Error!", JOptionPane.ERROR_MESSAGE);
+    //        }
+    //    }
+    //}
 }

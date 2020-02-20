@@ -88,9 +88,6 @@ public class Viewer extends JPanel {
         //Draw background
         drawBackground(g);
 
-        //drawExit(g);
-        //Draw player
-
         g.drawImage(gameSpace.background, 0, 0, null);
 
         drawPlayer(x, y, width, height, texture, g);
@@ -138,8 +135,12 @@ public class Viewer extends JPanel {
     }
 
     public void setLevel(char[][] grid) {
+        if (grid == null) {
+            System.out.println("Level is null");
+            return;
+        }
         this.grid = grid;
-
+        gameSpace.clearGrid();
         int x = 100;
         int y = 100;
 
@@ -184,6 +185,10 @@ public class Viewer extends JPanel {
         private BufferedImage background;
 
         public BackgroundGrid() {
+            background = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        }
+
+        public void clearGrid() {
             background = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
         }
 

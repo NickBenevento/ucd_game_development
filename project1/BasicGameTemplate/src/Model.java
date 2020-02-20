@@ -40,11 +40,11 @@ public class Model {
     private int startX   = 86;
     private int startY   = 856;
     private int Score    = 0;
-    private int Lives    = 3;
     private Direction playerDirection;
     private int Moves = 0;
     private int targetX;
     private int targetY;
+    private boolean finishedLevel = false;
     //private int hole = -1; // want to draw a black screen for 3 frames if the player falls in a hole
 
     enum Direction {
@@ -60,8 +60,7 @@ public class Model {
         //Player
         Player          = new GameObject("../res/seal.png", 60, 40, new Point3f(startX, startY, 0));
         playerDirection = Direction.STILL;
-        targetX         = startX;
-        targetY         = startY;
+        resetTargetPosition();
     }
 
     public void setLevel(char[][] Level) {
@@ -70,59 +69,21 @@ public class Model {
 
     // This is the heart of the game , where the model takes in all the inputs ,decides the outcomes and then changes the model accordingly.
     public void gamelogic() {
-        // Player Logic first
         playerLogic();
-        // Enemy Logic next
-        enemyLogic();
-        // interactions between objects
-        gameLogic();
-    }
-
-    private void gameLogic() {
-        // this is a way to increment across the array list data structure
-
-
-        //see if they hit anything
-        // using enhanced for-loop style as it makes it alot easier both code wise and reading wise too
-        for (GameObject temp : EnemiesList) {
-            for (GameObject Bullet : BulletList) {
-                if (Math.abs(temp.getCentre().getX() - Bullet.getCentre().getX()) < temp.getWidth() &&
-                    Math.abs(temp.getCentre().getY() - Bullet.getCentre().getY()) < temp.getHeight()) {
-                    EnemiesList.remove(temp);
-                    BulletList.remove(Bullet);
-                    Score++;
-                }
-            }
-
-            if (Math.abs(temp.getCentre().getX() - Player.getCentre().getX()) < temp.getWidth() &&
-                Math.abs(temp.getCentre().getY() - Player.getCentre().getY()) < temp.getHeight()) {
-                EnemiesList.remove(temp);
-                Score = -1;
-            }
-        }
-    }
-
-    private void enemyLogic() {
-        // TODO Auto-generated method stub
-        for (GameObject temp : EnemiesList) {
-            // Move enemies
-
-            temp.getCentre().ApplyVector(new Vector3f(0, -1, 0));
-        }
     }
 
     private void playerLogic() {
-        if (Player.getCentre().getX() == targetX && Player.getCentre().getY() == targetY) {
+        if (getX() == targetX && getY() == targetY) {
             playerDirection = Direction.STILL;
             // check if player is at finish tile or fell in a hole
-            int row = (((int)Player.getCentre().getY() - 56) / 40) - 1;
-            int col = ((int)Player.getCentre().getX() - startX) / 40;
+            int row = ((getY() - 56) / 40) - 1;
+            int col = (getX() - startX) / 40;
             if (Level[row][col] == 'F') {
                 System.out.println("You won!");
-                resetTargetPosition();
+                finishedLevel = true;
+                //resetTargetPosition();
             } else if (Level[row][col] == 'O') {
-                Player.getCentre().setX(startX);
-                Player.getCentre().setY(startY);
+                resetStartPosition();
                 resetTargetPosition();
             }
         } else {
@@ -176,8 +137,8 @@ public class Model {
      * in front of the player and the direction they want to move in
      */
     private void setTargetX() {
-        int row = (((int)Player.getCentre().getY() - 56) / 40) - 1;
-        int col = ((int)Player.getCentre().getX() - startX) / 40;
+        int row = ((getY() - 56) / 40) - 1;
+        int col = (getX() - startX) / 40;
 
         int i = row;
 
@@ -261,9 +222,24 @@ public class Model {
         }
     }
 
+    public void reset() {
+        resetStartPosition();
+        resetTargetPosition();
+        finishedLevel = false;
+    }
+
     public void resetTargetPosition() {
-        targetX = (int)Player.getCentre().getX();
-        targetY = (int)Player.getCentre().getY();
+        targetX = getX();
+        targetY = getY();
+    }
+
+    public void resetStartPosition() {
+        Player.getCentre().setX(startX);
+        Player.getCentre().setY(startY);
+    }
+
+    public boolean finishedLevel() {
+        return finishedLevel;
     }
 
     public GameObject getPlayer() {
@@ -286,11 +262,23 @@ public class Model {
         return Moves;
     }
 
-    public void setMoves(int moves) {
-        this.Moves = moves;
+    public int getX() {
+        return (int)Player.getCentre().getX();
     }
 
-    public int getLives() {
-        return Lives;
+    public int getY() {
+        return (int)Player.getCentre().getY();
+    }
+
+    public int getTargetX() {
+        return targetX;
+    }
+
+    public int getTargetY() {
+        return targetY;
+    }
+
+    public void setMoves(int moves) {
+        this.Moves = moves;
     }
 }

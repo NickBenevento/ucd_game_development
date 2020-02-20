@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
@@ -60,19 +61,20 @@ public class MainWindow {
     private static boolean startGame = false;
     private JLabel BackgroundImageForStartMenu;
     private JButton startMenuButton;
-    private ButtonListener buttonListener; // listener for pause/play button
-    private JButton load;                  // button to load a previous game
-    private JButton pause;                 // button to resume the game
-    private boolean isPaused = false;      // keep track of if the game is paused
-    char[][] Level1;
+    private ButtonListener buttonListener;      // listener for pause/play button
+    private JButton load;                       // button to load a previous game
+    private JButton pause;                      // button to resume the game
+    private JButton save;
+    //private boolean isPaused = false;           // keep track of if the game is paused
+    char[][][] Levels        = new char[10][][];
+    private int currentLevel = 0;
+    //char[][] Level1;
     private Timer timer;
     private static TimerListener timerListener;
     private int cycleTime = 10;
 
     public MainWindow() {
-        //char[][] Level1 = makeLevel();
-        Level1 = makeLevel2();
-        gameworld.setLevel(Level1);
+        setUpLevels();
 
         frame.setSize(1300, 1000);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -94,7 +96,7 @@ public class MainWindow {
         //}
 
         buttonListener  = new ButtonListener();
-        startMenuButton = new JButton("Start Game");        // start button
+        startMenuButton = new JButton("New Game");        // start button
         startMenuButton.addActionListener(buttonListener);
 
         load = new JButton("Load Game");
@@ -142,7 +144,6 @@ public class MainWindow {
         // view update
 
         canvas.updateview();
-        //background.repaint();
 
         //try {
         //    Thread.sleep(5);
@@ -151,18 +152,17 @@ public class MainWindow {
         //}
 
         scoreboard.setMoves(gameworld.getMoves());
-        //Toolkit.getDefaultToolkit().sync();
-        // Both these calls could be setup as  a thread but we want to simplify the game logic for you.
-        //score update
-        //frame.setTitle("Score =  " + gameworld.getScore());
-        //frame.setTitle("Moves =  " + gameworld.getScore());
+        Toolkit.getDefaultToolkit().sync();
     }
 
     class TimerListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
             //Object e = event.getSource();
-
+            if (gameworld.finishedLevel()) {
+                currentLevel++;
+                loadNextLevel();
+            }
             gameloop();
             scoreboard.updateTime(((double)cycleTime) / 100.0);
             //Toolkit.getDefaultToolkit().sync();
@@ -177,32 +177,30 @@ public class MainWindow {
             if (e == startMenuButton) {
                 setUpGame();
             } else if (e == load) {
-                setUpGame();
                 try {
                     BufferedReader reader = new BufferedReader(new FileReader("save.txt"));
-                    String         str;
+                    setUpGame();
+                    String str;
                     /* reads the scores into the arraylist */
+                    str          = reader.readLine();
+                    currentLevel = Integer.parseInt(str);
+                    gameworld.setLevel(Levels[currentLevel]);
+                    canvas.setLevel(Levels[currentLevel]);
+                    scoreboard.setLevel(currentLevel);
+
                     str = reader.readLine();
-                    int level = Integer.parseInt(str);
-                    System.out.println("level: " + level);
-                    str = reader.readLine();
-                    if (str == null) {
-                        System.out.println("str is null");
-                    }
                     int moves = Integer.parseInt(str);
-                    System.out.println("moves: " + moves);
                     scoreboard.setMoves(moves);
                     gameworld.setMoves(moves);
+
                     str = reader.readLine();
-                    System.out.println("time: " + str);
-                    double time = Double.parseDouble(str);
-                    scoreboard.setTime(time);
+                    scoreboard.setTime(Double.parseDouble(str));
+
                     str = reader.readLine();
-                    int x = Integer.parseInt(str);
-                    gameworld.getPlayer().getCentre().setX(x);
+                    gameworld.getPlayer().getCentre().setX(Integer.parseInt(str));
+
                     str = reader.readLine();
-                    int y = Integer.parseInt(str);
-                    gameworld.getPlayer().getCentre().setY(y);
+                    gameworld.getPlayer().getCentre().setY(Integer.parseInt(str));
 
                     gameworld.resetTargetPosition();
 
@@ -213,44 +211,69 @@ public class MainWindow {
                 }
             } else if (e == pause) {
                 /* if the button was clicked and the game is not paused, pause the game */
-                if (!isPaused) {
-                    pause.setText("Play");
-                    isPaused = true;                     /* game is now paused */
+                if (pause.getText().equals("Pause")) {
+                    pauseGame();
                 } else {
-                    pause.setText("Pause");
-                    isPaused = false;                     /* otherwise resume the game */
+                    resumeGame();
                 }
+            } else if (e == save) {
+                // the player can only save while they are still --> prevents exploits from saving/loading
+                if (gameworld.getDirection() == Model.Direction.STILL) {
+                    int x = gameworld.getX();
+                    int y = gameworld.getY();
+                    scoreboard.saveGame(x, y);
+                } else {
+                    pauseGame();
+                    JOptionPane.showMessageDialog(null, "You can't save the game while sliding!", "Save Error!", JOptionPane.ERROR_MESSAGE);
+                    resumeGame();
+                }
+                /* if they clicked the endgame button, stop the timer and exit */
+                //else {
+                //    //timer.stop();
+                //    setVisible(false);
+                //    dispose();
+                //}
             }
-            /* if they clicked the endgame button, stop the timer and exit */
-            //else {
-            //    //timer.stop();
-            //    setVisible(false);
-            //    dispose();
-            //}
         }
     }
 
+    public void pauseGame() {
+        timer.stop();
+        pause.setText("Play");
+        //isPaused = true;                             /* game is now paused */
+    }
+
+    public void resumeGame() {
+        timer.start();
+        pause.setText("Pause");
+        //isPaused = false;                                 /* otherwise resume the game */
+    }
+
     public void setUpGame() {
+        save = new JButton("Save Game");
+        save.addActionListener(buttonListener);
+
+        save.setFocusable(false);
+
         startMenuButton.setVisible(false);
         //BackgroundImageForStartMenu.setVisible(false);
         canvas.setVisible(true);
         //canvas.background.setVisible(true);
         canvas.addKeyListener(Controller);                                       //adding the controller to the Canvas
         canvas.requestFocusInWindow();                                           // making sure that the Canvas is in focus so keyboard input will be taking in .
-        canvas.setLevel(Level1);
+        canvas.setLevel(Levels[currentLevel]);
 
+        gameworld.setLevel(Levels[currentLevel]);
 
-        scoreboard = new Scoreboard(gameworld);
-        //buttons    = new ButtonListener();
-        //pause      = new JButton("Pause");
+        scoreboard = new Scoreboard();
 
-        //pause.setFocusable(false);
-        //pause.addActionListener(buttons);
-        //frame.add(canvas.background);
+        scoreboard.setLevel(currentLevel);
+        pause = new JButton("Pause");
+
+        pause.setFocusable(false);
+        pause.addActionListener(buttonListener);
         //pause.setPreferredSize(new Dimension(100, 30));
-        //canvas.add(background);
-        //background.setBounds(0, 0, 1000, 1000);
-        //frame.add(background);
+        //pause.setBounds(50, 400, 100, 30);
         //canvas.add(pause, BorderLayout.WEST);
         //canvas.add(scoreboard);
         frame.add(scoreboard);
@@ -258,32 +281,47 @@ public class MainWindow {
         timer         = new Timer(cycleTime, timerListener);         // timer listener will fire every 100 milliseconds
         timer.start();
         scoreboard.setBounds(1000, 0, 300, 500);
+        scoreboard.add(pause);
+        scoreboard.add(save);
         startGame = true;
     }
 
-    public char[][] makeLevel() {
+    public void loadNextLevel() {
+        // can add prompt here to save progress
+        canvas.setLevel(Levels[currentLevel]);
+        gameworld.setLevel(Levels[currentLevel]);
+        scoreboard.setLevel(currentLevel);
+        gameworld.reset();
+    }
+
+    public void setUpLevels() {
+        Levels[0] = makeLevel1();
+        Levels[1] = makeLevel2();
+    }
+
+    public char[][] makeLevel1() {
         // T for transparent, X for ice, B for boulder, O for hole, F for finish (exit)
         char[][] level = {
             { 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'T', 'T', 'T' },
             { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
             { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
             { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'O', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
             { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
             { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
             { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
             { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
             { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
             { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'G', 'X', 'X', 'B', 'B', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'G', 'G', 'B', 'B', 'G', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'G', 'G', 'G', 'G', 'G', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B' }
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'B', 'B', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'B', 'B', 'B', 'X', 'X', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'G', 'G', 'G', 'X', 'X', 'X', 'G', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X' },
+            { 'G', 'G', 'G', 'B', 'B', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X' }
         };
         return level;
     }
