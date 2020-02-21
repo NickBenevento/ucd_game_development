@@ -72,6 +72,8 @@ public class MainWindow {
     private Timer timer;
     private static TimerListener timerListener;
     private int cycleTime = 10;
+    private long startTime;
+    private long pauseTime = 0;
 
     public MainWindow() {
         setUpLevels();
@@ -163,8 +165,10 @@ public class MainWindow {
                 currentLevel++;
                 loadNextLevel();
             }
+            scoreboard.setTime((System.nanoTime() - startTime - pauseTime) / 1000000000.0);
+            //scoreboard.updateTime(((double)cycleTime) / 100.0);
+
             gameloop();
-            scoreboard.updateTime(((double)cycleTime) / 100.0);
             //Toolkit.getDefaultToolkit().sync();
         }
     }
@@ -212,8 +216,11 @@ public class MainWindow {
             } else if (e == pause) {
                 /* if the button was clicked and the game is not paused, pause the game */
                 if (pause.getText().equals("Pause")) {
+                    pauseTime = System.nanoTime();
                     pauseGame();
                 } else {
+                    long temp = pauseTime;
+                    pauseTime = System.nanoTime() - temp;
                     resumeGame();
                 }
             } else if (e == save) {
@@ -221,7 +228,15 @@ public class MainWindow {
                 if (gameworld.getDirection() == Model.Direction.STILL) {
                     int x = gameworld.getX();
                     int y = gameworld.getY();
-                    scoreboard.saveGame(x, y);
+                    try {
+                        BufferedReader reader = new BufferedReader(new FileReader("save.txt"));
+                        int            result = JOptionPane.showConfirmDialog(null, "There is already a save file. Are you sure you want to overwrite it?", "Save Prompt", JOptionPane.YES_NO_OPTION);
+                        if (result == JOptionPane.YES_OPTION) {
+                            scoreboard.saveGame(x, y);
+                        }
+                    } catch (IOException exc) {
+                        scoreboard.saveGame(x, y);
+                    }
                 } else {
                     pauseGame();
                     JOptionPane.showMessageDialog(null, "You can't save the game while sliding!", "Save Error!", JOptionPane.ERROR_MESSAGE);
@@ -284,6 +299,8 @@ public class MainWindow {
         scoreboard.add(pause);
         scoreboard.add(save);
         startGame = true;
+
+        startTime = System.nanoTime();
     }
 
     public void loadNextLevel() {
