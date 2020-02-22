@@ -65,6 +65,7 @@ public class MainWindow {
     private JButton load;                       // button to load a previous game
     private JButton pause;                      // button to resume the game
     private JButton save;
+    private JButton quit;
     //private boolean isPaused = false;           // keep track of if the game is paused
     char[][][] Levels        = new char[10][][];
     private int currentLevel = 0;
@@ -165,7 +166,8 @@ public class MainWindow {
                 currentLevel++;
                 loadNextLevel();
             }
-            scoreboard.setTime((System.nanoTime() - startTime - pauseTime) / 1000000000.0);
+            //scoreboard.setTime((System.nanoTime() - startTime - pauseTime) / 1000000000.0);
+            scoreboard.setTime((System.currentTimeMillis() - startTime - pauseTime) / 1000.0);
             //scoreboard.updateTime(((double)cycleTime) / 100.0);
 
             gameloop();
@@ -216,52 +218,54 @@ public class MainWindow {
             } else if (e == pause) {
                 /* if the button was clicked and the game is not paused, pause the game */
                 if (pause.getText().equals("Pause")) {
-                    pauseTime = System.nanoTime();
                     pauseGame();
                 } else {
-                    long temp = pauseTime;
-                    pauseTime = System.nanoTime() - temp;
                     resumeGame();
                 }
             } else if (e == save) {
                 // the player can only save while they are still --> prevents exploits from saving/loading
                 if (gameworld.getDirection() == Model.Direction.STILL) {
-                    int x = gameworld.getX();
-                    int y = gameworld.getY();
                     try {
                         BufferedReader reader = new BufferedReader(new FileReader("save.txt"));
                         int            result = JOptionPane.showConfirmDialog(null, "There is already a save file. Are you sure you want to overwrite it?", "Save Prompt", JOptionPane.YES_NO_OPTION);
                         if (result == JOptionPane.YES_OPTION) {
-                            scoreboard.saveGame(x, y);
+                            saveGame();
                         }
                     } catch (IOException exc) {
-                        scoreboard.saveGame(x, y);
+                        saveGame();
                     }
                 } else {
                     pauseGame();
                     JOptionPane.showMessageDialog(null, "You can't save the game while sliding!", "Save Error!", JOptionPane.ERROR_MESSAGE);
                     resumeGame();
                 }
-                /* if they clicked the endgame button, stop the timer and exit */
-                //else {
-                //    //timer.stop();
-                //    setVisible(false);
-                //    dispose();
-                //}
+            }
+            /* if they clicked the endgame button, stop the timer and exit */
+            else {
+                pauseGame();
+                int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to quit? Any progress not saved will be lost.", "Quit Prompt", JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION) {
+                    frame.setVisible(false);
+                    System.exit(0);
+                } else {
+                    resumeGame();
+                }
             }
         }
     }
 
     public void pauseGame() {
-        timer.stop();
+        //pauseTime = System.nanoTime();
+        pauseTime = System.currentTimeMillis();
         pause.setText("Play");
-        //isPaused = true;                             /* game is now paused */
+        timer.stop();
     }
 
     public void resumeGame() {
-        timer.start();
         pause.setText("Pause");
-        //isPaused = false;                                 /* otherwise resume the game */
+        long temp = pauseTime;
+        pauseTime = System.currentTimeMillis() - temp;
+        timer.start();
     }
 
     public void setUpGame() {
@@ -273,7 +277,6 @@ public class MainWindow {
         startMenuButton.setVisible(false);
         //BackgroundImageForStartMenu.setVisible(false);
         canvas.setVisible(true);
-        //canvas.background.setVisible(true);
         canvas.addKeyListener(Controller);                                       //adding the controller to the Canvas
         canvas.requestFocusInWindow();                                           // making sure that the Canvas is in focus so keyboard input will be taking in .
         canvas.setLevel(Levels[currentLevel]);
@@ -287,10 +290,14 @@ public class MainWindow {
 
         pause.setFocusable(false);
         pause.addActionListener(buttonListener);
+
+        quit = new JButton("Quit Game");
+        quit.setFocusable(false);
+        quit.addActionListener(buttonListener);
+
+
         //pause.setPreferredSize(new Dimension(100, 30));
         //pause.setBounds(50, 400, 100, 30);
-        //canvas.add(pause, BorderLayout.WEST);
-        //canvas.add(scoreboard);
         frame.add(scoreboard);
         timerListener = new TimerListener();
         timer         = new Timer(cycleTime, timerListener);         // timer listener will fire every 100 milliseconds
@@ -298,17 +305,33 @@ public class MainWindow {
         scoreboard.setBounds(1000, 0, 300, 500);
         scoreboard.add(pause);
         scoreboard.add(save);
+        scoreboard.add(quit);
         startGame = true;
 
-        startTime = System.nanoTime();
+        //startTime = System.nanoTime();
+        startTime = System.currentTimeMillis();
     }
 
     public void loadNextLevel() {
-        // can add prompt here to save progress
+        pauseGame();
         canvas.setLevel(Levels[currentLevel]);
         gameworld.setLevel(Levels[currentLevel]);
         scoreboard.setLevel(currentLevel);
         gameworld.reset();
+
+        // Lets the player save after completing the level
+        int result = JOptionPane.showConfirmDialog(null, "Do you want to save your progress?", "Save Prompt", JOptionPane.YES_NO_OPTION);
+        if (result == JOptionPane.YES_OPTION) {
+            saveGame();
+        }
+        resumeGame();
+    }
+
+    public void saveGame() {
+        int x = gameworld.getX();
+        int y = gameworld.getY();
+
+        scoreboard.saveGame(x, y);
     }
 
     public void setUpLevels() {

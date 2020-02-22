@@ -116,19 +116,27 @@ public class Model {
             if (Controller.getInstance().isKeyAPressed()) {
                 playerDirection = Direction.LEFT;
                 setTargetX();
-                Moves++;
+                if (targetX != getX()) {
+                    Moves++;
+                }
             } else if (Controller.getInstance().isKeyDPressed()) {
                 playerDirection = Direction.RIGHT;
                 setTargetX();
-                Moves++;
+                if (targetX != getX()) {
+                    Moves++;
+                }
             } else if (Controller.getInstance().isKeyWPressed()) {
                 playerDirection = Direction.UP;
                 setTargetY();
-                Moves++;
+                if (targetY != getY()) {
+                    Moves++;
+                }
             } else if (Controller.getInstance().isKeySPressed()) {
                 playerDirection = Direction.DOWN;
                 setTargetY();
-                Moves++;
+                if (targetY != getY()) {
+                    Moves++;
+                }
             }
         }
     }
