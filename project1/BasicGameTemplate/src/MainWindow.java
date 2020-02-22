@@ -61,6 +61,7 @@ public class MainWindow {
     private static int TargetFPS     = 100;
     private static boolean startGame = false;
     private JLabel BackgroundImageForStartMenu;
+    private String levelDisplayText;
 
     private JButton startMenuButton;
     private JButton load;                       // button to load a previous game
@@ -71,6 +72,7 @@ public class MainWindow {
 
     char[][][] Levels        = new char[10][][];
     private int currentLevel = 0;
+    private int lastLevel    = 2;
 
     private Timer timer;
     private static TimerListener timerListener;
@@ -117,33 +119,11 @@ public class MainWindow {
 
     public static void main(String[] args) {
         MainWindow hello = new MainWindow(); //sets up environment
-
-        //while (true) {                       //not nice but remember we do just want to keep looping till the end.  // this could be replaced by a thread but again we want to keep things simple
-        //    //swing has timer class to help us time this but I'm writing my own, you can of course use the timer, but I want to set FPS and display it
-
-        //    int  TimeBetweenFrames = 1000 / TargetFPS;
-        //    long FrameCheck        = System.currentTimeMillis() + (long)TimeBetweenFrames;
-
-        //    //wait till next time step
-        //    while (FrameCheck > System.currentTimeMillis()) {
-        //    }
-
-
-        //    if (startGame) {
-        //        gameloop();
-        //    }
-
-        //    //UNIT test to see if framerate matches
-        //    //UnitTests.CheckFrameRate(System.currentTimeMillis(), FrameCheck, TargetFPS);
-        //}
     }
 
     //Basic Model-View-Controller pattern
     private static void gameloop() {
         // GAMELOOP
-
-        // controller input  will happen on its own thread
-        // So no need to call it explicitly
 
         // model update
         gameworld.gamelogic();
@@ -169,12 +149,9 @@ public class MainWindow {
                 currentLevel++;
                 loadNextLevel();
             }
-            //scoreboard.setTime((System.nanoTime() - startTime - pauseTime) / 1000000000.0);
             scoreboard.setTime((System.currentTimeMillis() - startTime - totalPauseTime) / 1000.0);
-            //scoreboard.updateTime(((double)cycleTime) / 100.0);
 
             gameloop();
-            //Toolkit.getDefaultToolkit().sync();
         }
     }
 
@@ -195,7 +172,8 @@ public class MainWindow {
                     currentLevel = Integer.parseInt(str);
                     gameworld.setLevel(Levels[currentLevel]);
                     canvas.setLevel(Levels[currentLevel]);
-                    canvas.setCurrentLevel(currentLevel);
+                    //canvas.setCurrentLevel(currentLevel);
+                    canvas.setDisplayText(levelDisplayText);
                     scoreboard.setLevel(currentLevel);
 
                     str = reader.readLine();
@@ -260,8 +238,27 @@ public class MainWindow {
         }
     }
 
+    public void endgame() {
+        levelDisplayText += "\nCongratulations! You beat the game!";
+        canvas.setDisplayText(levelDisplayText);
+
+        canvas.updateview();
+
+        int result = JOptionPane.showConfirmDialog(null, "Would you like to restart from the beginning?", "End Game Prompt", JOptionPane.YES_NO_OPTION);
+        if (result == JOptionPane.YES_OPTION) {
+            currentLevel     = 0;
+            levelDisplayText = "Level " + (currentLevel + 1) + " completed!";
+            startTime        = System.currentTimeMillis();
+            pauseTime        = 0;
+            totalPauseTime   = 0;
+            gameworld.setMoves(0);
+        }
+        if (result == JOptionPane.NO_OPTION) {
+            System.exit(0);
+        }
+    }
+
     public void pauseGame() {
-        //pauseTime = System.nanoTime();
         pauseTime = System.currentTimeMillis();
         pause.setText("Play");
         timer.stop();
@@ -276,13 +273,14 @@ public class MainWindow {
     }
 
     public void setUpGame() {
+        levelDisplayText = "Level " + (currentLevel + 1) + " completed!";
+
         save = new JButton("Save Game");
         save.addActionListener(buttonListener);
 
         save.setFocusable(false);
 
         startMenuButton.setVisible(false);
-        //BackgroundImageForStartMenu.setVisible(false);
         canvas.setVisible(true);
         canvas.addKeyListener(Controller);                                       //adding the controller to the Canvas
         canvas.requestFocusInWindow();                                           // making sure that the Canvas is in focus so keyboard input will be taking in .
@@ -312,17 +310,21 @@ public class MainWindow {
 
         frame.add(scoreboard);
 
-        //startTime = System.nanoTime();
         startTime = System.currentTimeMillis();
         startGame = true;
     }
 
     public void loadNextLevel() {
-        pauseGame();
         canvas.setBlackScreen(true);
 
-        canvas.setCurrentLevel(currentLevel);
+        canvas.setDisplayText(levelDisplayText);
         canvas.updateview();
+
+        if (currentLevel == lastLevel) {
+            endgame();
+        }
+
+        pauseGame();
         canvas.setLevel(Levels[currentLevel]);
 
         gameworld.setLevel(Levels[currentLevel]);
@@ -330,9 +332,11 @@ public class MainWindow {
         gameworld.reset();
 
         // Lets the player save after completing the level
-        int result = JOptionPane.showConfirmDialog(null, "Do you want to save your progress?", "Save Prompt", JOptionPane.YES_NO_OPTION);
-        if (result == JOptionPane.YES_OPTION) {
-            saveGame();
+        if (currentLevel != 0) {
+            int result = JOptionPane.showConfirmDialog(null, "Do you want to save your progress?", "Save Prompt", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                saveGame();
+            }
         }
         canvas.setBlackScreen(false);
         resumeGame();

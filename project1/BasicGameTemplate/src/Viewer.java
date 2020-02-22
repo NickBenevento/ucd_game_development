@@ -48,7 +48,8 @@ public class Viewer extends JPanel {
     Model gameworld = new Model();
     BackgroundGrid gameSpace;
     private boolean setBlackScreen = false;
-    private int currentLevel       = 0;
+    private String displayText;
+    //private int currentLevel       = 0;
 
     public Viewer(Model World) {
         this.gameworld = World;
@@ -76,9 +77,13 @@ public class Viewer extends JPanel {
         setBlackScreen = b;
     }
 
-    public void setCurrentLevel(int level) {
-        currentLevel = level;
+    public void setDisplayText(String text) {
+        displayText = text;
     }
+
+    //public void setCurrentLevel(int level) {
+    //    currentLevel = level;
+    //}
 
     public void updateview() {
         this.repaint();
@@ -100,7 +105,7 @@ public class Viewer extends JPanel {
             }
             g.setFont(new Font("SansSerif", Font.BOLD, 30));
             g.setColor(Color.WHITE);
-            g.drawString("Level " + currentLevel + " completed!", 300, 300);
+            g.drawString(displayText, 300, 300);
             return;
         }
         //Draw player Game Object
