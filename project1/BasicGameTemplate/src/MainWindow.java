@@ -76,7 +76,8 @@ public class MainWindow {
     private static TimerListener timerListener;
     private int cycleTime = 10;
     private long startTime;
-    private long pauseTime = 0;
+    private long pauseTime      = 0;
+    private long totalPauseTime = 0;
 
     public MainWindow() {
         setUpLevels();
@@ -169,7 +170,7 @@ public class MainWindow {
                 loadNextLevel();
             }
             //scoreboard.setTime((System.nanoTime() - startTime - pauseTime) / 1000000000.0);
-            scoreboard.setTime((System.currentTimeMillis() - startTime - pauseTime) / 1000.0);
+            scoreboard.setTime((System.currentTimeMillis() - startTime - totalPauseTime) / 1000.0);
             //scoreboard.updateTime(((double)cycleTime) / 100.0);
 
             gameloop();
@@ -269,7 +270,8 @@ public class MainWindow {
     public void resumeGame() {
         pause.setText("Pause");
         long temp = pauseTime;
-        pauseTime = System.currentTimeMillis() - temp;
+        pauseTime       = System.currentTimeMillis() - temp;
+        totalPauseTime += pauseTime;
         timer.start();
     }
 
