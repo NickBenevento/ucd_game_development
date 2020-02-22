@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
@@ -16,8 +17,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.Timer;
+import javax.swing.JOptionPane;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import util.UnitTests;
 
 /*
@@ -56,165 +61,97 @@ public class MainWindow {
     private static int TargetFPS     = 100;
     private static boolean startGame = false;
     private JLabel BackgroundImageForStartMenu;
-    private ButtonListener buttons;    // listener for pause/play button
-    private JButton pause;             // button to resume the game
-    private boolean isPaused = false;  // keep track of if the game is paused
+    private String levelDisplayText;
+
+    private JButton startMenuButton;
+    private JButton load;                       // button to load a previous game
+    private JButton pause;                      // button to resume the game
+    private JButton save;
+    private JButton quit;
+    private ButtonListener buttonListener;          // listener for pause/play button
+
+    char[][][] Levels        = new char[10][][];
+    private int currentLevel = 0;
+    private int lastLevel    = 2;
+
     private Timer timer;
     private static TimerListener timerListener;
+    private int cycleTime = 10;
+    private long startTime;
+    private long pauseTime      = 0;
+    private long totalPauseTime = 0;
 
     public MainWindow() {
-        char[][] Level1 = makeLevel();
-        gameworld.setLevel(Level1);
+        setUpLevels();
 
-        frame.setSize(1300, 1000);                            // you can customise this later and adapt it to change on size.
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //If exit // you can modify with your way of quitting , just is a template.
+        frame.setSize(1300, 1000);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
-        //frame.setLayout(BorderLayout);
         frame.add(canvas);
         canvas.setBounds(0, 0, 1000, 1000);
 
-        //canvas.setBackground(new Color(255, 255, 255)); //white background  replaced by Space background but if you remove the background method this will draw a white screen
-        canvas.setVisible(false);                            // this will become visible after you press the key.
-
-        JButton startMenuButton = new JButton("Start Game"); // start button
-        startMenuButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                startMenuButton.setVisible(false);
-                BackgroundImageForStartMenu.setVisible(false);
-                canvas.setVisible(true);
-                //canvas.background.setVisible(true);
-                canvas.addKeyListener(Controller);                               //adding the controller to the Canvas
-                canvas.requestFocusInWindow();                                   // making sure that the Canvas is in focus so keyboard input will be taking in .
-                canvas.setLevel(Level1);
-
-
-                scoreboard = new Scoreboard();
-                //buttons    = new ButtonListener();
-                //pause      = new JButton("Pause");
-
-                //pause.setFocusable(false);
-                //pause.addActionListener(buttons);
-                //frame.add(canvas.background);
-                //pause.setPreferredSize(new Dimension(100, 30));
-                //canvas.add(background);
-                //background.setBounds(0, 0, 1000, 1000);
-                //frame.add(background);
-                //canvas.add(pause, BorderLayout.WEST);
-                //canvas.add(scoreboard);
-                frame.add(scoreboard);
-                timerListener = new TimerListener();
-                timer         = new Timer(100, timerListener); // timer listener will fire every 100 milliseconds
-                timer.start();
-                scoreboard.setBounds(1000, 0, 300, 500);
-
-                startGame = true;
-            }
-        });
-        startMenuButton.setBounds(400, 500, 200, 40);
+        canvas.setVisible(false);                           // this will become visible after you press the key.
 
         //loading background image
         File BackroundToLoad = new File("../res/startscreen.png");          //should work okay on OSX and Linux but check if you have issues depending your eclipse install or if your running this without an IDE
-        try {
-            BufferedImage myPicture = ImageIO.read(BackroundToLoad);
-            BackgroundImageForStartMenu = new JLabel(new ImageIcon(myPicture));
-            BackgroundImageForStartMenu.setBounds(0, 0, 1000, 1000);
-            frame.add(BackgroundImageForStartMenu);
-        }  catch (IOException e) {
-            e.printStackTrace();
-        }
+        //try {
+        //    BufferedImage myPicture = ImageIO.read(BackroundToLoad);
+        //    BackgroundImageForStartMenu = new JLabel(new ImageIcon(myPicture));
+        //    BackgroundImageForStartMenu.setBounds(0, 0, 1000, 1000);
+        //    frame.add(BackgroundImageForStartMenu);
+        //}  catch (IOException e) {
+        //    e.printStackTrace();
+        //}
 
-        frame.add(startMenuButton);
+        buttonListener  = new ButtonListener();
+        startMenuButton = new JButton("New Game");        // start button
+        startMenuButton.addActionListener(buttonListener);
+
+        load = new JButton("Load Game");
+        load.addActionListener(buttonListener);
+        load.setBounds(300, 500, 200, 40);
+        startMenuButton.setBounds(600, 500, 200, 40);
+
         frame.setVisible(true);
+        frame.add(load);
+        frame.add(startMenuButton);
     }
 
     public static void main(String[] args) {
         MainWindow hello = new MainWindow(); //sets up environment
-
-        while (true) {                       //not nice but remember we do just want to keep looping till the end.  // this could be replaced by a thread but again we want to keep things simple
-            //swing has timer class to help us time this but I'm writing my own, you can of course use the timer, but I want to set FPS and display it
-
-            int  TimeBetweenFrames = 1000 / TargetFPS;
-            long FrameCheck        = System.currentTimeMillis() + (long)TimeBetweenFrames;
-
-            //wait till next time step
-            while (FrameCheck > System.currentTimeMillis()) {
-            }
-
-
-            if (startGame) {
-                gameloop();
-            }
-
-            //Toolkit.getDefaultToolkit().sync();
-            //UNIT test to see if framerate matches
-            //UnitTests.CheckFrameRate(System.currentTimeMillis(), FrameCheck, TargetFPS);
-        }
     }
 
     //Basic Model-View-Controller pattern
     private static void gameloop() {
         // GAMELOOP
 
-        // controller input  will happen on its own thread
-        // So no need to call it explicitly
-
         // model update
         gameworld.gamelogic();
         // view update
 
         canvas.updateview();
-        //background.repaint();
 
-        try {
-            Thread.sleep(5);
-        } catch (InterruptedException e) {
-            System.out.println("Interruped Exception!");
-        }
-        if (gameworld.getLives() <= 0) {
-            System.exit(0);
-        }
+        //try {
+        //    Thread.sleep(5);
+        //} catch (InterruptedException e) {
+        //    System.out.println("Interruped Exception!");
+        //}
 
-        scoreboard.updateMoves(gameworld.getMoves());
-        // Both these calls could be setup as  a thread but we want to simplify the game logic for you.
-        //score update
-        //frame.setTitle("Score =  " + gameworld.getScore());
-        //frame.setTitle("Moves =  " + gameworld.getScore());
-    }
-
-    public char[][] makeLevel() {
-        char[][] level = {
-            { 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'O', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'G', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'G', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'G', 'G', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'G', 'G', 'G', 'G', 'G', 'G', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B' }
-        };
-        return level;
+        scoreboard.setMoves(gameworld.getMoves());
+        Toolkit.getDefaultToolkit().sync();
     }
 
     class TimerListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
             //Object e = event.getSource();
+            if (gameworld.finishedLevel()) {
+                currentLevel++;
+                loadNextLevel();
+            }
+            scoreboard.setTime((System.currentTimeMillis() - startTime - totalPauseTime) / 1000.0);
 
-            scoreboard.updateTime(.10);
-            //Toolkit.getDefaultToolkit().sync();
+            gameloop();
         }
     }
 
@@ -223,22 +160,251 @@ public class MainWindow {
         public void actionPerformed(ActionEvent event) {
             Object e = event.getSource();
 
-            if (e == pause) {
+            if (e == startMenuButton) {
+                setUpGame();
+            } else if (e == load) {
+                try {
+                    BufferedReader reader = new BufferedReader(new FileReader("save.txt"));
+                    setUpGame();
+                    String str;
+                    /* reads the scores into the arraylist */
+                    str          = reader.readLine();
+                    currentLevel = Integer.parseInt(str);
+                    gameworld.setLevel(Levels[currentLevel]);
+                    canvas.setLevel(Levels[currentLevel]);
+                    //canvas.setCurrentLevel(currentLevel);
+                    canvas.setDisplayText(levelDisplayText);
+                    scoreboard.setLevel(currentLevel);
+
+                    str = reader.readLine();
+                    int moves = Integer.parseInt(str);
+                    scoreboard.setMoves(moves);
+                    gameworld.setMoves(moves);
+
+                    str = reader.readLine();
+                    scoreboard.setTime(Double.parseDouble(str));
+
+                    str = reader.readLine();
+                    gameworld.getPlayer().getCentre().setX(Integer.parseInt(str));
+
+                    str = reader.readLine();
+                    gameworld.getPlayer().getCentre().setY(Integer.parseInt(str));
+
+                    gameworld.resetTargetPosition();
+
+                    reader.close();
+                } catch (IOException exc) {
+                    //System.out.println("No save file found");
+                    JOptionPane.showMessageDialog(null, "No save file found!", "Load Error!", JOptionPane.ERROR_MESSAGE);
+                }
+            } else if (e == pause) {
                 /* if the button was clicked and the game is not paused, pause the game */
-                if (!isPaused) {
-                    pause.setText("Play");
-                    isPaused = true;                     /* game is now paused */
+                if (pause.getText().equals("Pause")) {
+                    pauseGame();
                 } else {
-                    pause.setText("Pause");
-                    isPaused = false;                     /* otherwise resume the game */
+                    resumeGame();
+                }
+            } else if (e == save) {
+                // the player can only save while they are still --> prevents exploits from saving/loading
+                if (gameworld.getDirection() == Model.Direction.STILL) {
+                    pauseGame();
+                    try {
+                        BufferedReader reader = new BufferedReader(new FileReader("save.txt"));
+                        int            result = JOptionPane.showConfirmDialog(null, "There is already a save file. Are you sure you want to overwrite it?", "Save Prompt", JOptionPane.YES_NO_OPTION);
+                        if (result == JOptionPane.YES_OPTION) {
+                            saveGame();
+                        }
+                    } catch (IOException exc) {
+                        saveGame();
+                    }
+                    resumeGame();
+                } else {
+                    pauseGame();
+                    JOptionPane.showMessageDialog(null, "You can't save the game while sliding!", "Save Error!", JOptionPane.ERROR_MESSAGE);
+                    resumeGame();
                 }
             }
             /* if they clicked the endgame button, stop the timer and exit */
-            //else {
-            //    //timer.stop();
-            //    setVisible(false);
-            //    dispose();
-            //}
+            else {
+                pauseGame();
+                int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to quit? Any progress not saved will be lost.", "Quit Prompt", JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION) {
+                    frame.setVisible(false);
+                    System.exit(0);
+                } else {
+                    resumeGame();
+                }
+            }
         }
+    }
+
+    public void endgame() {
+        levelDisplayText += "\nCongratulations! You beat the game!";
+        canvas.setDisplayText(levelDisplayText);
+
+        canvas.updateview();
+
+        int result = JOptionPane.showConfirmDialog(null, "Would you like to restart from the beginning?", "End Game Prompt", JOptionPane.YES_NO_OPTION);
+        if (result == JOptionPane.YES_OPTION) {
+            currentLevel     = 0;
+            levelDisplayText = "Level " + (currentLevel + 1) + " completed!";
+            startTime        = System.currentTimeMillis();
+            pauseTime        = 0;
+            totalPauseTime   = 0;
+            gameworld.setMoves(0);
+        }
+        if (result == JOptionPane.NO_OPTION) {
+            System.exit(0);
+        }
+    }
+
+    public void pauseGame() {
+        pauseTime = System.currentTimeMillis();
+        pause.setText("Play");
+        timer.stop();
+    }
+
+    public void resumeGame() {
+        pause.setText("Pause");
+        long temp = pauseTime;
+        pauseTime       = System.currentTimeMillis() - temp;
+        totalPauseTime += pauseTime;
+        timer.start();
+    }
+
+    public void setUpGame() {
+        levelDisplayText = "Level " + (currentLevel + 1) + " completed!";
+
+        save = new JButton("Save Game");
+        save.addActionListener(buttonListener);
+
+        save.setFocusable(false);
+
+        startMenuButton.setVisible(false);
+        canvas.setVisible(true);
+        canvas.addKeyListener(Controller);                                       //adding the controller to the Canvas
+        canvas.requestFocusInWindow();                                           // making sure that the Canvas is in focus so keyboard input will be taking in .
+        canvas.setLevel(Levels[currentLevel]);
+
+        gameworld.setLevel(Levels[currentLevel]);
+
+        scoreboard = new Scoreboard();
+
+        scoreboard.setLevel(currentLevel);
+        pause = new JButton("Pause");
+
+        pause.setFocusable(false);
+        pause.addActionListener(buttonListener);
+
+        quit = new JButton("Quit Game");
+        quit.setFocusable(false);
+        quit.addActionListener(buttonListener);
+
+        timerListener = new TimerListener();
+        timer         = new Timer(cycleTime, timerListener);         // timer listener will fire every 100 milliseconds
+        timer.start();
+        scoreboard.setBounds(1000, 0, 300, 500);
+        scoreboard.add(pause);
+        scoreboard.add(save);
+        scoreboard.add(quit);
+
+        frame.add(scoreboard);
+
+        startTime = System.currentTimeMillis();
+        startGame = true;
+    }
+
+    public void loadNextLevel() {
+        canvas.setBlackScreen(true);
+
+        canvas.setDisplayText(levelDisplayText);
+        canvas.updateview();
+
+        if (currentLevel == lastLevel) {
+            endgame();
+        }
+
+        pauseGame();
+        canvas.setLevel(Levels[currentLevel]);
+
+        gameworld.setLevel(Levels[currentLevel]);
+        scoreboard.setLevel(currentLevel);
+        gameworld.reset();
+
+        // Lets the player save after completing the level
+        if (currentLevel != 0) {
+            int result = JOptionPane.showConfirmDialog(null, "Do you want to save your progress?", "Save Prompt", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                saveGame();
+            }
+        }
+        canvas.setBlackScreen(false);
+        resumeGame();
+    }
+
+    public void saveGame() {
+        int x = gameworld.getX();
+        int y = gameworld.getY();
+
+        scoreboard.saveGame(x, y);
+    }
+
+    public void setUpLevels() {
+        Levels[0] = makeLevel1();
+        Levels[1] = makeLevel2();
+    }
+
+    public char[][] makeLevel1() {
+        // T for transparent, X for ice, B for boulder, O for hole, F for finish (exit)
+        char[][] level = {
+            { 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'T', 'T', 'T' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'B', 'B', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'B', 'B', 'B', 'X', 'X', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'G', 'G', 'G', 'X', 'X', 'X', 'G', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X' },
+            { 'G', 'G', 'G', 'B', 'B', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X' }
+        };
+        return level;
+    }
+
+    public char[][] makeLevel2() {
+        // T for transparent, X for ice, B for boulder, O for hole, F for finish (exit)
+        char[][] level = {
+            { 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'B', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'O', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'O', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X' },
+            { 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'O' },
+            { 'X', 'O', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'B', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'B', 'B', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X' },
+            { 'G', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' }
+        };
+        return level;
     }
 }

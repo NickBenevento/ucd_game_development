@@ -1,3 +1,4 @@
+import java.awt.Font;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -45,14 +46,15 @@ public class Viewer extends JPanel {
     private long CurrentAnimationTime = 0;
     private char[][] grid;
     Model gameworld = new Model();
-    //BufferedImage background;
-    BackgroundGrid background;
-    //File TextureToLoad = new File("../res/iceblock.png");
+    BackgroundGrid gameSpace;
+    private boolean setBlackScreen = false;
+    private String displayText;
+    //private int currentLevel       = 0;
 
     public Viewer(Model World) {
         this.gameworld = World;
-        background     = new BackgroundGrid();
-        background.setBounds(0, 0, 1000, 1000);
+        gameSpace      = new BackgroundGrid();
+        gameSpace.setBounds(0, 0, 1000, 1000);
         // TODO Auto-generated constructor stub
     }
 
@@ -71,6 +73,18 @@ public class Viewer extends JPanel {
         // TODO Auto-generated constructor stub
     }
 
+    public void setBlackScreen(boolean b) {
+        setBlackScreen = b;
+    }
+
+    public void setDisplayText(String text) {
+        displayText = text;
+    }
+
+    //public void setCurrentLevel(int level) {
+    //    currentLevel = level;
+    //}
+
     public void updateview() {
         this.repaint();
         // TODO Auto-generated method stub
@@ -80,6 +94,20 @@ public class Viewer extends JPanel {
         super.paintComponent(g);
         CurrentAnimationTime++;         // runs animation time step
 
+        if (setBlackScreen) {
+            File blackScreen = new File("../res/blackScreen.png");
+            try {
+                Image myImage = ImageIO.read(blackScreen);
+                g.drawImage(myImage, 0, 0, 1000, 1000, null);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            g.setFont(new Font("SansSerif", Font.BOLD, 30));
+            g.setColor(Color.WHITE);
+            g.drawString(displayText, 300, 300);
+            return;
+        }
         //Draw player Game Object
         int    x       = (int)gameworld.getPlayer().getCentre().getX();
         int    y       = (int)gameworld.getPlayer().getCentre().getY();
@@ -90,12 +118,9 @@ public class Viewer extends JPanel {
         //Draw background
         drawBackground(g);
 
-        //Draw player
-
-        g.drawImage(background.background, 0, 0, null);
+        g.drawImage(gameSpace.background, 0, 0, null);
 
         drawPlayer(x, y, width, height, texture, g);
-        //background.repaint();
     }
 
     private void drawBackground(Graphics g) {
@@ -105,6 +130,19 @@ public class Viewer extends JPanel {
         try {
             Image myImage = ImageIO.read(background);
             g.drawImage(myImage, 0, 0, 1000, 1000, null);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    private void drawExit(Graphics g) {
+        File exit;
+
+        exit = new File("../res/exit.png");
+        try {
+            Image myImage = ImageIO.read(exit);
+            g.drawImage(myImage, 620, 60, 40, 40, null);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -127,8 +165,12 @@ public class Viewer extends JPanel {
     }
 
     public void setLevel(char[][] grid) {
+        if (grid == null) {
+            System.out.println("Level is null");
+            return;
+        }
         this.grid = grid;
-
+        gameSpace.clearGrid();
         int x = 100;
         int y = 100;
 
@@ -145,6 +187,10 @@ public class Viewer extends JPanel {
                     TextureToLoad = new File("../res/boulder.png");
                 } else if (grid[i][j] == 'O') {
                     TextureToLoad = new File("../res/hole.png");
+                } else if (grid[i][j] == 'F') {
+                    TextureToLoad = new File("../res/exit.png");
+                } else if (grid[i][j] == 'T') {
+                    TextureToLoad = new File("../res/blank.png");
                 } else {
                     System.out.println("grid char not recognized");
                     TextureToLoad = new File("../res/blankSprite.png");
@@ -152,7 +198,7 @@ public class Viewer extends JPanel {
 
                 try {
                     Image myImage = ImageIO.read(TextureToLoad);
-                    background.addSquare(myImage, x, y);
+                    gameSpace.addSquare(myImage, x, y);
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -169,6 +215,10 @@ public class Viewer extends JPanel {
         private BufferedImage background;
 
         public BackgroundGrid() {
+            background = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        }
+
+        public void clearGrid() {
             background = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
         }
 

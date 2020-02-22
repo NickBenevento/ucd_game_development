@@ -36,15 +36,16 @@ public class Model {
     private CopyOnWriteArrayList <GameObject> EnemiesList = new CopyOnWriteArrayList <GameObject>();
     private CopyOnWriteArrayList <GameObject> BulletList  = new CopyOnWriteArrayList <GameObject>();
     private char[][] Level;
-    private int startX = 86;
-    private int startY = 856;
-    private int Score  = 0;
-    private int Lives  = 3;
-    //private boolean sliding = false;
+    private int cellSize = 40;
+    private int startX   = 86;
+    private int startY   = 856;
+    private int Score    = 0;
     private Direction playerDirection;
     private int Moves = 0;
     private int targetX;
     private int targetY;
+    private boolean finishedLevel = false;
+    //private int hole = -1; // want to draw a black screen for 3 frames if the player falls in a hole
 
     enum Direction {
         LEFT,
@@ -59,8 +60,7 @@ public class Model {
         //Player
         Player          = new GameObject("../res/seal.png", 60, 40, new Point3f(startX, startY, 0));
         playerDirection = Direction.STILL;
-        targetX         = startX;
-        targetY         = startY;
+        resetTargetPosition();
     }
 
     public void setLevel(char[][] Level) {
@@ -69,80 +69,41 @@ public class Model {
 
     // This is the heart of the game , where the model takes in all the inputs ,decides the outcomes and then changes the model accordingly.
     public void gamelogic() {
-        // Player Logic first
         playerLogic();
-        // Enemy Logic next
-        enemyLogic();
-        // interactions between objects
-        gameLogic();
-    }
-
-    private void gameLogic() {
-        // this is a way to increment across the array list data structure
-
-
-        //see if they hit anything
-        // using enhanced for-loop style as it makes it alot easier both code wise and reading wise too
-        for (GameObject temp : EnemiesList) {
-            for (GameObject Bullet : BulletList) {
-                if (Math.abs(temp.getCentre().getX() - Bullet.getCentre().getX()) < temp.getWidth() &&
-                    Math.abs(temp.getCentre().getY() - Bullet.getCentre().getY()) < temp.getHeight()) {
-                    EnemiesList.remove(temp);
-                    BulletList.remove(Bullet);
-                    Score++;
-                }
-            }
-
-            if (Math.abs(temp.getCentre().getX() - Player.getCentre().getX()) < temp.getWidth() &&
-                Math.abs(temp.getCentre().getY() - Player.getCentre().getY()) < temp.getHeight()) {
-                EnemiesList.remove(temp);
-                Score = -1;
-            }
-        }
-    }
-
-    private void enemyLogic() {
-        // TODO Auto-generated method stub
-        for (GameObject temp : EnemiesList) {
-            // Move enemies
-
-            temp.getCentre().ApplyVector(new Vector3f(0, -1, 0));
-        }
     }
 
     private void playerLogic() {
-        if (Player.getCentre().getX() == targetX && Player.getCentre().getY() == targetY) {
+        if (getX() == targetX && getY() == targetY) {
             playerDirection = Direction.STILL;
+            // check if player is at finish tile or fell in a hole
+            int row = ((getY() - 56) / 40) - 1;
+            int col = (getX() - startX) / 40;
+            if (Level[row][col] == 'F') {
+                System.out.println("You won!");
+                finishedLevel = true;
+                //resetTargetPosition();
+            } else if (Level[row][col] == 'O') {
+                resetStartPosition();
+                resetTargetPosition();
+            }
         } else {
-            // animation of character is done by moving 40 pixels (to stay in line with the grid) in 10 different time steps (4 pixels each time until the character reaches the target square
+            // animation of character is done by moving 40 pixels (to stay in line with the grid) in 5 different time steps (8 pixels each time until the character reaches the target square
             switch (playerDirection)
             {
-                case LEFT:     // sliding left
-                    Player.getCentre().ApplyVector(new Vector3f(-4, 0, 0));
-                    if (Player.getCentre().getX() == 0) {
-                        playerDirection = Direction.STILL;
-                    }
+                case LEFT:
+                    Player.getCentre().ApplyVector(new Vector3f(-8, 0, 0));
                     break;
 
-                case RIGHT:     // sliding right
-                    Player.getCentre().ApplyVector(new Vector3f(4, 0, 0));
-                    if (Player.getCentre().getX() == Player.getCentre().getBoundaryX()) {
-                        playerDirection = Direction.STILL;
-                    }
+                case RIGHT:
+                    Player.getCentre().ApplyVector(new Vector3f(8, 0, 0));
                     break;
 
-                case UP:     // sliding up
-                    Player.getCentre().ApplyVector(new Vector3f(0, 4, 0));
-                    if (Player.getCentre().getY() == 0) {
-                        playerDirection = Direction.STILL;
-                    }
+                case UP:
+                    Player.getCentre().ApplyVector(new Vector3f(0, 8, 0));
                     break;
 
-                case DOWN:     // sliding down
-                    Player.getCentre().ApplyVector(new Vector3f(0, -4, 0));
-                    if (Player.getCentre().getY() == Player.getCentre().getBoundaryY()) {
-                        playerDirection = Direction.STILL;
-                    }
+                case DOWN:
+                    Player.getCentre().ApplyVector(new Vector3f(0, -8, 0));
                     break;
 
                 default:        // still
@@ -154,49 +115,44 @@ public class Model {
         if (playerDirection == Direction.STILL) {
             if (Controller.getInstance().isKeyAPressed()) {
                 playerDirection = Direction.LEFT;
-                setTargetX(Direction.LEFT);
-                //targetX         = (int)Player.getCentre().getX() - 40;
-                Moves++;
+                setTargetX();
+                if (targetX != getX()) {
+                    Moves++;
+                }
             } else if (Controller.getInstance().isKeyDPressed()) {
                 playerDirection = Direction.RIGHT;
-                setTargetX(Direction.RIGHT);
-                //targetX         = (int)Player.getCentre().getX() + 40;
-                Moves++;
+                setTargetX();
+                if (targetX != getX()) {
+                    Moves++;
+                }
             } else if (Controller.getInstance().isKeyWPressed()) {
                 playerDirection = Direction.UP;
-                setTargetY(Direction.UP);
-                //targetY         = (int)Player.getCentre().getY() - 40;
-                Moves++;
+                setTargetY();
+                if (targetY != getY()) {
+                    Moves++;
+                }
             } else if (Controller.getInstance().isKeySPressed()) {
                 playerDirection = Direction.DOWN;
-                setTargetY(Direction.DOWN);
-                //targetY         = (int)Player.getCentre().getY() + 40;
-                Moves++;
+                setTargetY();
+                if (targetY != getY()) {
+                    Moves++;
+                }
             }
         }
-
-        // if collision
-        //	player direction = still
-
-
-        // check if the player hit an obstacle
-        //if (playerDirection != Direction.STILL && playerIsStopped()) {
-        //    playerDirection = Direction.STILL;
-        //}
     }
 
     /* calculating target position based on the type of ground
      * in front of the player and the direction they want to move in
      */
-    private void setTargetX(Direction d) {
-        int row = (((int)Player.getCentre().getY() - 56) / 40) - 1;
-        int col = ((int)Player.getCentre().getX() - startX) / 40;
+    private void setTargetX() {
+        int row = ((getY() - 56) / 40) - 1;
+        int col = (getX() - startX) / 40;
 
         int i = row;
 
-        if (d == Direction.LEFT) {
+        if (playerDirection == Direction.LEFT) {
             // bounds checking
-            if (col == 0) {
+            if (col == 0 || Level[row][col - 1] == 'B' || Level[row][col - 1] == 'T') {
                 return;
             }
 
@@ -207,39 +163,39 @@ public class Model {
                 if (col == 0) {
                     break;
                 }
-                if (Level[row][col - 1] == 'B') {
+                if (Level[row][col - 1] == 'B' || Level[row][col - 1] == 'T') {
                     break;
                 }
             } while (Level[row][col] == 'X');
         } else {
             // Direction = RIGHT
             // bounds checking
-            if (col + 1 == Level.length) {
+            if (col + 1 == Level[row].length || Level[row][col + 1] == 'B' || Level[row][col + 1] == 'T') {
                 return;
             }
             do {
                 targetX += 40;
                 col++;
-                if (col == Level.length - 1) {
+                if (col == Level[row].length - 1) {
                     break;
                 }
                 // boulder check; want to stop 1 space before
-                if (Level[row][col + 1] == 'B') {
+                if (Level[row][col + 1] == 'B' || Level[row][col + 1] == 'T') {
                     break;
                 }
             } while (Level[row][col] == 'X');
         }
     }
 
-    private void setTargetY(Direction d) {
-        int row = (((int)Player.getCentre().getY() - 56) / 40) - 1;
-        int col = ((int)Player.getCentre().getX() - startX) / 40;
+    private void setTargetY() {
+        int row = (((int)Player.getCentre().getY() - 56) / cellSize) - 1;
+        int col = ((int)Player.getCentre().getX() - startX) / cellSize;
 
         int i = row;
 
-        if (d == Direction.UP) {
+        if (playerDirection == Direction.UP) {
             // bounds checking
-            if (row == 0) {
+            if (row == 0 || Level[row - 1][col] == 'B' || Level[row - 1][col] == 'T') {
                 return;
             }
 
@@ -250,14 +206,14 @@ public class Model {
                 if (row == 0) {
                     break;
                 }
-                if (Level[row - 1][col] == 'B') {
+                if (Level[row - 1][col] == 'B' || Level[row - 1][col] == 'T') {
                     break;
                 }
             } while (Level[row][col] == 'X');
         } else {
             // Direction: DOWN
             // bounds checking
-            if (row + 1 == Level.length) {
+            if (row + 1 == Level.length || Level[row + 1][col] == 'B' || Level[row + 1][col] == 'T') {
                 return;
             }
             do {
@@ -267,32 +223,39 @@ public class Model {
                     break;
                 }
                 // boulder check; want to stop 1 space before
-                if (Level[row + 1][col] == 'B') {
+                if (Level[row + 1][col] == 'B' || Level[row + 1][col] == 'T') {
                     break;
                 }
             } while (Level[row][col] == 'X');
         }
     }
 
-    private void resetTargetPosition() {
-        targetX = (int)Player.getCentre().getX();
-        targetY = (int)Player.getCentre().getY();
+    public void reset() {
+        resetStartPosition();
+        resetTargetPosition();
+        finishedLevel = false;
     }
 
-    //private boolean playerIsStopped() {
-    //    float x        = Player.getCentre().getX();
-    //    float y        = Player.getCentre().getY();
-    //    int   boundary = Player.getCentre().getBoundary();
+    public void resetTargetPosition() {
+        targetX = getX();
+        targetY = getY();
+    }
 
-    //    if (x == boundary || y == boundary || x == 0 || y == 0) {
-    //        //playerDirection = Direction.STILL;
-    //        return true;
-    //    }
-    //    return false;
-    //}
+    public void resetStartPosition() {
+        Player.getCentre().setX(startX);
+        Player.getCentre().setY(startY);
+    }
+
+    public boolean finishedLevel() {
+        return finishedLevel;
+    }
 
     public GameObject getPlayer() {
         return Player;
+    }
+
+    public Direction getDirection() {
+        return playerDirection;
     }
 
     public CopyOnWriteArrayList <GameObject> getEnemies() {
@@ -307,7 +270,23 @@ public class Model {
         return Moves;
     }
 
-    public int getLives() {
-        return Lives;
+    public int getX() {
+        return (int)Player.getCentre().getX();
+    }
+
+    public int getY() {
+        return (int)Player.getCentre().getY();
+    }
+
+    public int getTargetX() {
+        return targetX;
+    }
+
+    public int getTargetY() {
+        return targetY;
+    }
+
+    public void setMoves(int moves) {
+        this.Moves = moves;
     }
 }
