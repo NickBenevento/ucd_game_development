@@ -17,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.JOptionPane;
 
@@ -60,16 +61,17 @@ public class MainWindow {
     private static int TargetFPS     = 100;
     private static boolean startGame = false;
     private JLabel BackgroundImageForStartMenu;
+
     private JButton startMenuButton;
-    private ButtonListener buttonListener;      // listener for pause/play button
     private JButton load;                       // button to load a previous game
     private JButton pause;                      // button to resume the game
     private JButton save;
     private JButton quit;
-    //private boolean isPaused = false;           // keep track of if the game is paused
+    private ButtonListener buttonListener;          // listener for pause/play button
+
     char[][][] Levels        = new char[10][][];
     private int currentLevel = 0;
-    //char[][] Level1;
+
     private Timer timer;
     private static TimerListener timerListener;
     private int cycleTime = 10;
@@ -192,6 +194,7 @@ public class MainWindow {
                     currentLevel = Integer.parseInt(str);
                     gameworld.setLevel(Levels[currentLevel]);
                     canvas.setLevel(Levels[currentLevel]);
+                    canvas.setCurrentLevel(currentLevel);
                     scoreboard.setLevel(currentLevel);
 
                     str = reader.readLine();
@@ -225,6 +228,7 @@ public class MainWindow {
             } else if (e == save) {
                 // the player can only save while they are still --> prevents exploits from saving/loading
                 if (gameworld.getDirection() == Model.Direction.STILL) {
+                    pauseGame();
                     try {
                         BufferedReader reader = new BufferedReader(new FileReader("save.txt"));
                         int            result = JOptionPane.showConfirmDialog(null, "There is already a save file. Are you sure you want to overwrite it?", "Save Prompt", JOptionPane.YES_NO_OPTION);
@@ -234,6 +238,7 @@ public class MainWindow {
                     } catch (IOException exc) {
                         saveGame();
                     }
+                    resumeGame();
                 } else {
                     pauseGame();
                     JOptionPane.showMessageDialog(null, "You can't save the game while sliding!", "Save Error!", JOptionPane.ERROR_MESSAGE);
@@ -295,10 +300,6 @@ public class MainWindow {
         quit.setFocusable(false);
         quit.addActionListener(buttonListener);
 
-
-        //pause.setPreferredSize(new Dimension(100, 30));
-        //pause.setBounds(50, 400, 100, 30);
-        frame.add(scoreboard);
         timerListener = new TimerListener();
         timer         = new Timer(cycleTime, timerListener);         // timer listener will fire every 100 milliseconds
         timer.start();
@@ -306,15 +307,22 @@ public class MainWindow {
         scoreboard.add(pause);
         scoreboard.add(save);
         scoreboard.add(quit);
-        startGame = true;
+
+        frame.add(scoreboard);
 
         //startTime = System.nanoTime();
         startTime = System.currentTimeMillis();
+        startGame = true;
     }
 
     public void loadNextLevel() {
         pauseGame();
+        canvas.setBlackScreen(true);
+
+        canvas.setCurrentLevel(currentLevel);
+        canvas.updateview();
         canvas.setLevel(Levels[currentLevel]);
+
         gameworld.setLevel(Levels[currentLevel]);
         scoreboard.setLevel(currentLevel);
         gameworld.reset();
@@ -324,6 +332,7 @@ public class MainWindow {
         if (result == JOptionPane.YES_OPTION) {
             saveGame();
         }
+        canvas.setBlackScreen(false);
         resumeGame();
     }
 

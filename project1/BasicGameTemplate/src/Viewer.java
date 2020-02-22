@@ -1,3 +1,4 @@
+import java.awt.Font;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -46,6 +47,8 @@ public class Viewer extends JPanel {
     private char[][] grid;
     Model gameworld = new Model();
     BackgroundGrid gameSpace;
+    private boolean setBlackScreen = false;
+    private int currentLevel       = 0;
 
     public Viewer(Model World) {
         this.gameworld = World;
@@ -69,6 +72,14 @@ public class Viewer extends JPanel {
         // TODO Auto-generated constructor stub
     }
 
+    public void setBlackScreen(boolean b) {
+        setBlackScreen = b;
+    }
+
+    public void setCurrentLevel(int level) {
+        currentLevel = level;
+    }
+
     public void updateview() {
         this.repaint();
         // TODO Auto-generated method stub
@@ -78,6 +89,20 @@ public class Viewer extends JPanel {
         super.paintComponent(g);
         CurrentAnimationTime++;         // runs animation time step
 
+        if (setBlackScreen) {
+            File blackScreen = new File("../res/blackScreen.png");
+            try {
+                Image myImage = ImageIO.read(blackScreen);
+                g.drawImage(myImage, 0, 0, 1000, 1000, null);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            g.setFont(new Font("SansSerif", Font.BOLD, 30));
+            g.setColor(Color.WHITE);
+            g.drawString("Level " + currentLevel + " completed!", 300, 300);
+            return;
+        }
         //Draw player Game Object
         int    x       = (int)gameworld.getPlayer().getCentre().getX();
         int    y       = (int)gameworld.getPlayer().getCentre().getY();
