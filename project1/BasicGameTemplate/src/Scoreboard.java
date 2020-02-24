@@ -9,29 +9,23 @@ import java.text.DecimalFormat;
 import util.GameObject;
 
 public class Scoreboard extends JPanel {
-    //private GameObject player;
-    //private Model gameworld;
-    //private ButtonListener saveListener;
-    private JTextArea high_scores; /* displays the top 10 scores of all time */
     private JLabel Moves;
     private JLabel Time;
+    private JLabel levelDisplay;
     private double elapsedTime;
     private int moves;
     private int level;
-    ArrayList <String> score_list;
     DecimalFormat d2 = new DecimalFormat("0.0");
 
     public Scoreboard() {
-        //this.gameworld = gameworld;
-
-        // add label with current level
-
         /* start with 0 */
         elapsedTime = 0;
-        score_list  = new ArrayList <String>();
         /* sets the font */
         Font  scores = new Font("SansSerif", Font.BOLD, 28);
         Color back   = getBackground();
+
+        levelDisplay = new JLabel("Level " + (level + 1));
+        levelDisplay.setFont(new Font("SansSerif", Font.BOLD, 30));
 
         moves = 0;
         Moves = new JLabel("Moves: " + moves);
@@ -47,6 +41,7 @@ public class Scoreboard extends JPanel {
 
         /* setting the layout and adding the lables to the panel */
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        add(levelDisplay);
         add(Moves);
         add(Time);
         //add(save);
@@ -59,6 +54,7 @@ public class Scoreboard extends JPanel {
 
     public void setLevel(int level) {
         this.level = level;
+        levelDisplay.setText("Level " + (level + 1));
     }
 
     public void setMoves(int moves) {

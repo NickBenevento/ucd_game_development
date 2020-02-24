@@ -1,6 +1,7 @@
-import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -60,7 +61,6 @@ public class MainWindow {
     private KeyListener Controller   = new Controller();
     private static int TargetFPS     = 100;
     private static boolean startGame = false;
-    private JLabel BackgroundImageForStartMenu;
     private String levelDisplayText;
 
     private JButton startMenuButton;
@@ -72,7 +72,7 @@ public class MainWindow {
 
     char[][][] Levels        = new char[10][][];
     private int currentLevel = 0;
-    private int lastLevel    = 2;
+    private int lastLevel    = 3;
 
     private Timer timer;
     private static TimerListener timerListener;
@@ -84,37 +84,31 @@ public class MainWindow {
     public MainWindow() {
         setUpLevels();
 
-        frame.setSize(1300, 1000);
+        frame.setSize(1000, 1000);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
-        frame.add(canvas);
         canvas.setBounds(0, 0, 1000, 1000);
 
-        canvas.setVisible(false);                           // this will become visible after you press the key.
+        canvas.setLayout(new FlowLayout(FlowLayout.CENTER, 200, 500));
 
-        //loading background image
-        File BackroundToLoad = new File("../res/startscreen.png");          //should work okay on OSX and Linux but check if you have issues depending your eclipse install or if your running this without an IDE
-        //try {
-        //    BufferedImage myPicture = ImageIO.read(BackroundToLoad);
-        //    BackgroundImageForStartMenu = new JLabel(new ImageIcon(myPicture));
-        //    BackgroundImageForStartMenu.setBounds(0, 0, 1000, 1000);
-        //    frame.add(BackgroundImageForStartMenu);
-        //}  catch (IOException e) {
-        //    e.printStackTrace();
-        //}
+        //canvas.updateview();
 
-        buttonListener  = new ButtonListener();
         startMenuButton = new JButton("New Game");        // start button
+        startMenuButton.setPreferredSize(new Dimension(200, 40));
+        load = new JButton("Load Game");
+        load.setPreferredSize(new Dimension(200, 40));
+
+        buttonListener = new ButtonListener();
+        load.addActionListener(buttonListener);
         startMenuButton.addActionListener(buttonListener);
 
-        load = new JButton("Load Game");
-        load.addActionListener(buttonListener);
-        load.setBounds(300, 500, 200, 40);
-        startMenuButton.setBounds(600, 500, 200, 40);
-
+        canvas.add(startMenuButton);
+        canvas.add(load);
+        //frame.add(load);
+        //frame.add(startMenuButton);
+        frame.add(canvas);
+        canvas.setVisible(true);
         frame.setVisible(true);
-        frame.add(load);
-        frame.add(startMenuButton);
     }
 
     public static void main(String[] args) {
@@ -167,13 +161,12 @@ public class MainWindow {
                     BufferedReader reader = new BufferedReader(new FileReader("save.txt"));
                     setUpGame();
                     String str;
-                    /* reads the scores into the arraylist */
                     str          = reader.readLine();
                     currentLevel = Integer.parseInt(str);
+                    System.out.println(currentLevel);
                     gameworld.setLevel(Levels[currentLevel]);
                     canvas.setLevel(Levels[currentLevel]);
-                    //canvas.setCurrentLevel(currentLevel);
-                    canvas.setDisplayText(levelDisplayText);
+                    canvas.setDisplayText(levelDisplayText, false);
                     scoreboard.setLevel(currentLevel);
 
                     str = reader.readLine();
@@ -194,7 +187,6 @@ public class MainWindow {
 
                     reader.close();
                 } catch (IOException exc) {
-                    //System.out.println("No save file found");
                     JOptionPane.showMessageDialog(null, "No save file found!", "Load Error!", JOptionPane.ERROR_MESSAGE);
                 }
             } else if (e == pause) {
@@ -239,8 +231,7 @@ public class MainWindow {
     }
 
     public void endgame() {
-        levelDisplayText += "\nCongratulations! You beat the game!";
-        canvas.setDisplayText(levelDisplayText);
+        canvas.setDisplayText(levelDisplayText, true);
 
         canvas.updateview();
 
@@ -252,8 +243,7 @@ public class MainWindow {
             pauseTime        = 0;
             totalPauseTime   = 0;
             gameworld.setMoves(0);
-        }
-        if (result == JOptionPane.NO_OPTION) {
+        } else {
             System.exit(0);
         }
     }
@@ -274,25 +264,28 @@ public class MainWindow {
 
     public void setUpGame() {
         levelDisplayText = "Level " + (currentLevel + 1) + " completed!";
+        canvas.setStartScreen(false);
 
         save = new JButton("Save Game");
         save.addActionListener(buttonListener);
 
         save.setFocusable(false);
 
+        // remove the start menu buttons
         startMenuButton.setVisible(false);
+        load.setVisible(false);
+
         canvas.setVisible(true);
-        canvas.addKeyListener(Controller);                                       //adding the controller to the Canvas
-        canvas.requestFocusInWindow();                                           // making sure that the Canvas is in focus so keyboard input will be taking in .
+        canvas.addKeyListener(Controller); //adding the controller to the Canvas
+        canvas.requestFocusInWindow();     // making sure that the Canvas is in focus so keyboard input will be taking in .
         canvas.setLevel(Levels[currentLevel]);
 
         gameworld.setLevel(Levels[currentLevel]);
 
         scoreboard = new Scoreboard();
-
         scoreboard.setLevel(currentLevel);
-        pause = new JButton("Pause");
 
+        pause = new JButton("Pause");
         pause.setFocusable(false);
         pause.addActionListener(buttonListener);
 
@@ -301,13 +294,14 @@ public class MainWindow {
         quit.addActionListener(buttonListener);
 
         timerListener = new TimerListener();
-        timer         = new Timer(cycleTime, timerListener);         // timer listener will fire every 100 milliseconds
+        timer         = new Timer(cycleTime, timerListener); // timer listener will fire every 10 milliseconds
         timer.start();
         scoreboard.setBounds(1000, 0, 300, 500);
         scoreboard.add(pause);
         scoreboard.add(save);
         scoreboard.add(quit);
 
+        frame.setSize(1300, 1000);
         frame.add(scoreboard);
 
         startTime = System.currentTimeMillis();
@@ -317,7 +311,8 @@ public class MainWindow {
     public void loadNextLevel() {
         canvas.setBlackScreen(true);
 
-        canvas.setDisplayText(levelDisplayText);
+        levelDisplayText = "Level " + (currentLevel) + " completed!";
+        canvas.setDisplayText(levelDisplayText, false);
         canvas.updateview();
 
         if (currentLevel == lastLevel) {
@@ -352,6 +347,7 @@ public class MainWindow {
     public void setUpLevels() {
         Levels[0] = makeLevel1();
         Levels[1] = makeLevel2();
+        Levels[2] = makeLevel3();
     }
 
     public char[][] makeLevel1() {
@@ -373,8 +369,8 @@ public class MainWindow {
             { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
             { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
             { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'B', 'B', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'B', 'B', 'B', 'X', 'X', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
             { 'G', 'G', 'G', 'X', 'X', 'X', 'G', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X' },
             { 'G', 'G', 'G', 'B', 'B', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X' }
         };
@@ -382,6 +378,33 @@ public class MainWindow {
     }
 
     public char[][] makeLevel2() {
+        // T for transparent, X for ice, B for boulder, O for hole, F for finish (exit)
+        char[][] level = {
+            { 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'T', 'T', 'T' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'O', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X' }
+        };
+        return level;
+    }
+
+    public char[][] makeLevel3() {
         // T for transparent, X for ice, B for boulder, O for hole, F for finish (exit)
         char[][] level = {
             { 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T' },

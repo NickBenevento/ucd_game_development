@@ -49,7 +49,8 @@ public class Viewer extends JPanel {
     BackgroundGrid gameSpace;
     private boolean setBlackScreen = false;
     private String displayText;
-    //private int currentLevel       = 0;
+    private boolean endGame     = false;
+    private boolean startScreen = true;
 
     public Viewer(Model World) {
         this.gameworld = World;
@@ -77,13 +78,14 @@ public class Viewer extends JPanel {
         setBlackScreen = b;
     }
 
-    public void setDisplayText(String text) {
+    public void setDisplayText(String text, boolean b) {
         displayText = text;
+        endGame     = b;
     }
 
-    //public void setCurrentLevel(int level) {
-    //    currentLevel = level;
-    //}
+    public void setStartScreen(boolean b) {
+        startScreen = b;
+    }
 
     public void updateview() {
         this.repaint();
@@ -94,6 +96,7 @@ public class Viewer extends JPanel {
         super.paintComponent(g);
         CurrentAnimationTime++;         // runs animation time step
 
+        // for inbetween levels
         if (setBlackScreen) {
             File blackScreen = new File("../res/blackScreen.png");
             try {
@@ -106,6 +109,10 @@ public class Viewer extends JPanel {
             g.setFont(new Font("SansSerif", Font.BOLD, 30));
             g.setColor(Color.WHITE);
             g.drawString(displayText, 300, 300);
+            if (endGame) {
+                g.setColor(Color.GREEN);
+                g.drawString("Congratulations! You beat the game!", 300, 400);
+            }
             return;
         }
         //Draw player Game Object
@@ -118,9 +125,16 @@ public class Viewer extends JPanel {
         //Draw background
         drawBackground(g);
 
-        g.drawImage(gameSpace.background, 0, 0, null);
+        if (startScreen) {
+            g.setFont(new Font("SansSerif", Font.BOLD, 30));
+            g.setColor(Color.BLACK);
+            String title = "The Adventures of Stanley the Seal";
+            g.drawString(title, 200, 300);
+        } else {
+            g.drawImage(gameSpace.background, 0, 0, null);
 
-        drawPlayer(x, y, width, height, texture, g);
+            drawPlayer(x, y, width, height, texture, g);
+        }
     }
 
     private void drawBackground(Graphics g) {
@@ -166,7 +180,7 @@ public class Viewer extends JPanel {
 
     public void setLevel(char[][] grid) {
         if (grid == null) {
-            System.out.println("Level is null");
+            System.out.println("Level is null ");
             return;
         }
         this.grid = grid;
@@ -179,7 +193,6 @@ public class Viewer extends JPanel {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 if (grid[i][j] == 'X') {
-                    //TextureToLoad = new File("../res/ice_block.png");
                     TextureToLoad = new File("../res/iceblock.png");
                 } else if (grid[i][j] == 'G') {
                     TextureToLoad = new File("../res/ground.png");
@@ -192,7 +205,7 @@ public class Viewer extends JPanel {
                 } else if (grid[i][j] == 'T') {
                     TextureToLoad = new File("../res/blank.png");
                 } else {
-                    System.out.println("grid char not recognized");
+                    System.out.println("grid char not recognized ");
                     TextureToLoad = new File("../res/blankSprite.png");
                 }
 

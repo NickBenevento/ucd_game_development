@@ -79,9 +79,7 @@ public class Model {
             int row = ((getY() - 56) / 40) - 1;
             int col = (getX() - startX) / 40;
             if (Level[row][col] == 'F') {
-                System.out.println("You won!");
                 finishedLevel = true;
-                //resetTargetPosition();
             } else if (Level[row][col] == 'O') {
                 resetStartPosition();
                 resetTargetPosition();
