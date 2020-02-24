@@ -52,7 +52,6 @@ import util.UnitTests;
  */
 
 
-
 public class MainWindow {
     private static JFrame frame = new JFrame("Game");           // Change to the name of your game
     private static Scoreboard scoreboard;                       // high scores for the game
@@ -70,6 +69,7 @@ public class MainWindow {
     private JButton quit;
     private ButtonListener buttonListener;          // listener for pause/play button
 
+    LevelMaker levelMaker;                          // handles level creation
     char[][][] Levels        = new char[10][][];
     private int currentLevel = 0;
     private int lastLevel    = 3;
@@ -77,9 +77,10 @@ public class MainWindow {
     private Timer timer;
     private static TimerListener timerListener;
     private int cycleTime = 10;
-    private long startTime;
-    private long pauseTime      = 0;
-    private long totalPauseTime = 0;
+    //private long startTime;
+    //private long pauseTime      = 0;
+    //private long totalPauseTime = 0;
+
 
     public MainWindow() {
         setUpLevels();
@@ -143,7 +144,7 @@ public class MainWindow {
                 currentLevel++;
                 loadNextLevel();
             }
-            scoreboard.setTime((System.currentTimeMillis() - startTime - totalPauseTime) / 1000.0);
+            //scoreboard.setTime((System.currentTimeMillis() - startTime - totalPauseTime) / 1000.0);
 
             gameloop();
         }
@@ -157,38 +158,7 @@ public class MainWindow {
             if (e == startMenuButton) {
                 setUpGame();
             } else if (e == load) {
-                try {
-                    BufferedReader reader = new BufferedReader(new FileReader("save.txt"));
-                    setUpGame();
-                    String str;
-                    str          = reader.readLine();
-                    currentLevel = Integer.parseInt(str);
-                    System.out.println(currentLevel);
-                    gameworld.setLevel(Levels[currentLevel]);
-                    canvas.setLevel(Levels[currentLevel]);
-                    canvas.setDisplayText(levelDisplayText, false);
-                    scoreboard.setLevel(currentLevel);
-
-                    str = reader.readLine();
-                    int moves = Integer.parseInt(str);
-                    scoreboard.setMoves(moves);
-                    gameworld.setMoves(moves);
-
-                    str = reader.readLine();
-                    scoreboard.setTime(Double.parseDouble(str));
-
-                    str = reader.readLine();
-                    gameworld.getPlayer().getCentre().setX(Integer.parseInt(str));
-
-                    str = reader.readLine();
-                    gameworld.getPlayer().getCentre().setY(Integer.parseInt(str));
-
-                    gameworld.resetTargetPosition();
-
-                    reader.close();
-                } catch (IOException exc) {
-                    JOptionPane.showMessageDialog(null, "No save file found!", "Load Error!", JOptionPane.ERROR_MESSAGE);
-                }
+                loadGame();
             } else if (e == pause) {
                 /* if the button was clicked and the game is not paused, pause the game */
                 if (pause.getText().equals("Pause")) {
@@ -239,9 +209,9 @@ public class MainWindow {
         if (result == JOptionPane.YES_OPTION) {
             currentLevel     = 0;
             levelDisplayText = "Level " + (currentLevel + 1) + " completed!";
-            startTime        = System.currentTimeMillis();
-            pauseTime        = 0;
-            totalPauseTime   = 0;
+            //startTime        = System.currentTimeMillis();
+            //pauseTime      = 0;
+            //totalPauseTime = 0;
             gameworld.setMoves(0);
         } else {
             System.exit(0);
@@ -249,16 +219,16 @@ public class MainWindow {
     }
 
     public void pauseGame() {
-        pauseTime = System.currentTimeMillis();
+        //pauseTime = System.currentTimeMillis();
         pause.setText("Play");
         timer.stop();
     }
 
     public void resumeGame() {
         pause.setText("Pause");
-        long temp = pauseTime;
-        pauseTime       = System.currentTimeMillis() - temp;
-        totalPauseTime += pauseTime;
+        //long temp = pauseTime;
+        //pauseTime       = System.currentTimeMillis() - temp;
+        //totalPauseTime += pauseTime;
         timer.start();
     }
 
@@ -304,7 +274,7 @@ public class MainWindow {
         frame.setSize(1300, 1000);
         frame.add(scoreboard);
 
-        startTime = System.currentTimeMillis();
+        //startTime = System.currentTimeMillis();
         startGame = true;
     }
 
@@ -337,6 +307,44 @@ public class MainWindow {
         resumeGame();
     }
 
+    public void loadGame() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("save.txt"));
+            setUpGame();
+            String str;
+            str          = reader.readLine();
+            currentLevel = Integer.parseInt(str);
+            gameworld.setLevel(Levels[currentLevel]);
+            canvas.setLevel(Levels[currentLevel]);
+            canvas.setDisplayText(levelDisplayText, false);
+            scoreboard.setLevel(currentLevel);
+
+            str = reader.readLine();
+            int moves = Integer.parseInt(str);
+            scoreboard.setMoves(moves);
+            gameworld.setMoves(moves);
+
+            //str = reader.readLine();
+            //scoreboard.setTime(Double.parseDouble(str));
+            //startTime = Long.parseLong(str);
+
+            //str            = reader.readLine();
+            //totalPauseTime = Long.parseLong(str);
+
+            str = reader.readLine();
+            gameworld.getPlayer().getCentre().setX(Integer.parseInt(str));
+
+            str = reader.readLine();
+            gameworld.getPlayer().getCentre().setY(Integer.parseInt(str));
+
+            gameworld.resetTargetPosition();
+
+            reader.close();
+        } catch (IOException exc) {
+            JOptionPane.showMessageDialog(null, "No save file found!", "Load Error!", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     public void saveGame() {
         int x = gameworld.getX();
         int y = gameworld.getY();
@@ -345,89 +353,7 @@ public class MainWindow {
     }
 
     public void setUpLevels() {
-        Levels[0] = makeLevel1();
-        Levels[1] = makeLevel2();
-        Levels[2] = makeLevel3();
-    }
-
-    public char[][] makeLevel1() {
-        // T for transparent, X for ice, B for boulder, O for hole, F for finish (exit)
-        char[][] level = {
-            { 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'T', 'T', 'T' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'G', 'G', 'G', 'X', 'X', 'X', 'G', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X' },
-            { 'G', 'G', 'G', 'B', 'B', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X' }
-        };
-        return level;
-    }
-
-    public char[][] makeLevel2() {
-        // T for transparent, X for ice, B for boulder, O for hole, F for finish (exit)
-        char[][] level = {
-            { 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'T', 'T', 'T' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'O', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X' }
-        };
-        return level;
-    }
-
-    public char[][] makeLevel3() {
-        // T for transparent, X for ice, B for boulder, O for hole, F for finish (exit)
-        char[][] level = {
-            { 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'B', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'O', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'O', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X' },
-            { 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'O' },
-            { 'X', 'O', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'B', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'B', 'B', 'B', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X' },
-            { 'G', 'X', 'X', 'X', 'X', 'B', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' }
-        };
-        return level;
+        levelMaker = new LevelMaker();
+        levelMaker.makeLevels(Levels);
     }
 }

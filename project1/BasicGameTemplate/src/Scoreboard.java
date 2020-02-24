@@ -10,16 +10,16 @@ import util.GameObject;
 
 public class Scoreboard extends JPanel {
     private JLabel Moves;
-    private JLabel Time;
+    //private JLabel Time;
     private JLabel levelDisplay;
-    private double elapsedTime;
+    //private double elapsedTime;
     private int moves;
     private int level;
     DecimalFormat d2 = new DecimalFormat("0.0");
 
     public Scoreboard() {
         /* start with 0 */
-        elapsedTime = 0;
+        //elapsedTime = 0;
         /* sets the font */
         Font  scores = new Font("SansSerif", Font.BOLD, 28);
         Color back   = getBackground();
@@ -31,26 +31,26 @@ public class Scoreboard extends JPanel {
         Moves = new JLabel("Moves: " + moves);
         Moves.setPreferredSize(new Dimension(150, 50));
         Moves.setAlignmentX(CENTER_ALIGNMENT);
-        Time = new JLabel("Time: " + d2.format(elapsedTime));
-        Time.setPreferredSize(new Dimension(150, 100));
-        Time.setAlignmentX(CENTER_ALIGNMENT);
+        //Time = new JLabel("Time: " + d2.format(elapsedTime));
+        //Time.setPreferredSize(new Dimension(150, 100));
+        //Time.setAlignmentX(CENTER_ALIGNMENT);
         /* setting the font */
         Font font = new Font("SansSerif", Font.BOLD, 25);
         Moves.setFont(font);
-        Time.setFont(font);
+        //Time.setFont(font);
 
         /* setting the layout and adding the lables to the panel */
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         add(levelDisplay);
         add(Moves);
-        add(Time);
+        //add(Time);
         //add(save);
     }
 
-    public void updateTime(double time) {
-        elapsedTime += time;
-        Time.setText("Time: " + d2.format(elapsedTime) + "s");
-    }
+    //public void updateTime(double time) {
+    //    elapsedTime += time;
+    //    Time.setText("Time: " + d2.format(elapsedTime) + "s");
+    //}
 
     public void setLevel(int level) {
         this.level = level;
@@ -62,14 +62,14 @@ public class Scoreboard extends JPanel {
         Moves.setText("Moves: " + this.moves);
     }
 
-    public double getTime() {
-        return elapsedTime;
-    }
+    //public double getTime() {
+    //    return elapsedTime;
+    //}
 
-    public void setTime(double time) {
-        elapsedTime = time;
-        Time.setText("Time: " + d2.format(elapsedTime));
-    }
+    //public void setTime(double time) {
+    //    elapsedTime = time;
+    //    Time.setText("Time: " + d2.format(elapsedTime));
+    //}
 
     public int getMoves() {
         return moves;
@@ -82,7 +82,6 @@ public class Scoreboard extends JPanel {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
             writer.write(level + "\n");
             writer.write(moves + "\n");
-            writer.write(d2.format(elapsedTime) + "\n");
             writer.write(x + "\n");
             writer.write(y + "\n");
             writer.close();
@@ -90,20 +89,4 @@ public class Scoreboard extends JPanel {
             System.out.println("The file could not be written");
         }
     }
-
-    public void loadGame() {
-    }
-
-    //class ButtonListener implements ActionListener {
-    //    @Override
-    //    public void actionPerformed(ActionEvent event) {
-    //        //Object e = event.getSource();
-    //        // the player can only save while they are still --> prevents exploits from saving/loading
-    //        if (gameworld.getDirection() == Model.Direction.STILL) {
-    //            saveGame();
-    //        } else {
-    //            JOptionPane.showMessageDialog(null, "You can't save the game while sliding!", "Save Error!", JOptionPane.ERROR_MESSAGE);
-    //        }
-    //    }
-    //}
 }
