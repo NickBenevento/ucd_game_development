@@ -33,8 +33,8 @@ import util.Vector3f;
 public class Model {
     private GameObject Player;
     private Controller controller = Controller.getInstance();
+    private Mouse mouse           = Mouse.getInstance();
     private CopyOnWriteArrayList <GameObject> EnemiesList = new CopyOnWriteArrayList <GameObject>();
-    private CopyOnWriteArrayList <GameObject> BulletList  = new CopyOnWriteArrayList <GameObject>();
     private char[][] Level;
     private int cellSize = 40;
     private int startX   = 86;
@@ -69,10 +69,25 @@ public class Model {
 
     // This is the heart of the game , where the model takes in all the inputs ,decides the outcomes and then changes the model accordingly.
     public void gamelogic() {
-        playerLogic();
+        checkForMouse();
+        checkForMovement();
     }
 
-    private void playerLogic() {
+    private void checkForMouse() {
+        // mouse input
+        int r = mouse.getRow();
+        int c = mouse.getCol();
+
+        if (Level[r][c] == 'R') {
+            mouse.setRow(0);
+            mouse.setCol(0);
+            System.out.println("row: " + r + ", col: " + c);
+            //rotate(Level[r][c]);
+        }
+    }
+
+    private void checkForMovement() {
+        // movement key input
         if (getX() == targetX && getY() == targetY) {
             playerDirection = Direction.STILL;
             // check if player is at finish tile or fell in a hole
@@ -111,25 +126,25 @@ public class Model {
 
         //check for movement if player is not currently moving
         if (playerDirection == Direction.STILL) {
-            if (Controller.getInstance().isKeyAPressed()) {
+            if (controller.isKeyAPressed()) {
                 playerDirection = Direction.LEFT;
                 setTargetX();
                 if (targetX != getX()) {
                     Moves++;
                 }
-            } else if (Controller.getInstance().isKeyDPressed()) {
+            } else if (controller.isKeyDPressed()) {
                 playerDirection = Direction.RIGHT;
                 setTargetX();
                 if (targetX != getX()) {
                     Moves++;
                 }
-            } else if (Controller.getInstance().isKeyWPressed()) {
+            } else if (controller.isKeyWPressed()) {
                 playerDirection = Direction.UP;
                 setTargetY();
                 if (targetY != getY()) {
                     Moves++;
                 }
-            } else if (Controller.getInstance().isKeySPressed()) {
+            } else if (controller.isKeySPressed()) {
                 playerDirection = Direction.DOWN;
                 setTargetY();
                 if (targetY != getY()) {

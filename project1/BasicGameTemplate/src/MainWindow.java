@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -58,6 +59,7 @@ public class MainWindow {
     private static Model gameworld   = new Model();
     private static Viewer canvas     = new Viewer(gameworld);
     private KeyListener Controller   = new Controller();
+    private MouseListener Mouse      = new Mouse();
     private static int TargetFPS     = 100;
     private static boolean startGame = false;
     private String levelDisplayText;
@@ -247,6 +249,7 @@ public class MainWindow {
 
         canvas.setVisible(true);
         canvas.addKeyListener(Controller); //adding the controller to the Canvas
+        canvas.addMouseListener(Mouse);
         canvas.requestFocusInWindow();     // making sure that the Canvas is in focus so keyboard input will be taking in .
         canvas.setLevel(Levels[currentLevel]);
 

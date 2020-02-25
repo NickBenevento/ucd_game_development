@@ -45,8 +45,8 @@ import util.GameObject;
 public class Viewer extends JPanel {
     private long CurrentAnimationTime = 0;
     private char[][] grid;
-    Model gameworld = new Model();
-    BackgroundGrid gameSpace;
+    private Model gameworld = new Model();
+    private BackgroundGrid gameSpace;
     private boolean setBlackScreen = false;
     private String displayText;
     private boolean endGame     = false;
@@ -72,6 +72,10 @@ public class Viewer extends JPanel {
     public Viewer(LayoutManager layout, boolean isDoubleBuffered) {
         super(layout, isDoubleBuffered);
         // TODO Auto-generated constructor stub
+    }
+
+    public BackgroundGrid getGameSpace() {
+        return gameSpace;
     }
 
     public void setBlackScreen(boolean b) {
