@@ -32,6 +32,7 @@ import util.Vector3f;
  */
 public class Model {
     private GameObject Player;
+    private Viewer canvas;
     private Controller controller = Controller.getInstance();
     private Mouse mouse           = Mouse.getInstance();
     private CopyOnWriteArrayList <GameObject> EnemiesList = new CopyOnWriteArrayList <GameObject>();
@@ -63,6 +64,10 @@ public class Model {
         resetTargetPosition();
     }
 
+    public void setCanvas(Viewer canvas) {
+        this.canvas = canvas;
+    }
+
     public void setLevel(char[][] Level) {
         this.Level = Level;
     }
@@ -78,11 +83,38 @@ public class Model {
         int r = mouse.getRow();
         int c = mouse.getCol();
 
-        if (Level[r][c] == 'R') {
-            mouse.setRow(0);
-            mouse.setCol(0);
-            System.out.println("row: " + r + ", col: " + c);
-            //rotate(Level[r][c]);
+        switch (Level[r][c])
+        {
+            case 'R':
+                Level[r][c] = 'U';
+                mouse.setRow(0);
+                mouse.setCol(0);
+                canvas.updateCell(r, c, "../res/up_arrow.png");
+                break;
+
+            case 'U':
+                Level[r][c] = 'L';
+                mouse.setRow(0);
+                mouse.setCol(0);
+                canvas.updateCell(r, c, "../res/left_arrow.png");
+                break;
+
+            case 'L':
+                Level[r][c] = 'D';
+                mouse.setRow(0);
+                mouse.setCol(0);
+                canvas.updateCell(r, c, "../res/down_arrow.png");
+                break;
+
+            case 'D':
+                Level[r][c] = 'R';
+                mouse.setRow(0);
+                mouse.setCol(0);
+                canvas.updateCell(r, c, "../res/right_arrow.png");
+                break;
+
+            default:
+                break;
         }
     }
 

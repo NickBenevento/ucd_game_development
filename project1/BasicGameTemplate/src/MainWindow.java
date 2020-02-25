@@ -251,9 +251,10 @@ public class MainWindow {
         canvas.addKeyListener(Controller); //adding the controller to the Canvas
         canvas.addMouseListener(Mouse);
         canvas.requestFocusInWindow();     // making sure that the Canvas is in focus so keyboard input will be taking in .
-        canvas.setLevel(Levels[currentLevel]);
 
+        canvas.setLevel(Levels[currentLevel]);
         gameworld.setLevel(Levels[currentLevel]);
+        gameworld.setCanvas(canvas);
 
         scoreboard = new Scoreboard();
         scoreboard.setLevel(currentLevel);
