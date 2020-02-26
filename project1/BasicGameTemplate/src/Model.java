@@ -121,10 +121,30 @@ public class Model {
     private void checkForMovement() {
         // movement key input
         if (getX() == targetX && getY() == targetY) {
-            playerDirection = Direction.STILL;
-            // check if player is at finish tile or fell in a hole
             int row = ((getY() - 56) / 40) - 1;
             int col = (getX() - startX) / 40;
+
+            // directional (arrow) tiles
+            if (Level[row][col] == 'R') {
+                playerDirection = Direction.RIGHT;
+                setTargetX();
+            } else if (Level[row][col] == 'L') {
+                playerDirection = Direction.LEFT;
+                setTargetX();
+            } else if (Level[row][col] == 'U') {
+                playerDirection = Direction.UP;
+                setTargetY();
+            } else if (Level[row][col] == 'D') {
+                playerDirection = Direction.DOWN;
+                setTargetY();
+            }
+
+            // need to re-check because a directional tile could have been hit
+            if (getX() == targetX && getY() == targetY) {
+                playerDirection = Direction.STILL;
+            }
+
+            // check if player is at finish tile or fell in a hole
             if (Level[row][col] == 'F') {
                 finishedLevel = true;
             } else if (Level[row][col] == 'O') {
