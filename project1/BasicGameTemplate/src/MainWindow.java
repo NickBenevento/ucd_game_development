@@ -74,7 +74,7 @@ public class MainWindow {
     LevelMaker levelMaker;                          // handles level creation
     char[][][] Levels        = new char[10][][];
     private int currentLevel = 0;
-    private int lastLevel    = 3;
+    private int lastLevel    = 5;
 
     private Timer timer;
     private static TimerListener timerListener;

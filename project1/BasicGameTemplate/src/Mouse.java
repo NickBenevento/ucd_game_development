@@ -29,9 +29,6 @@ public class Mouse implements MouseListener {
 
         row = (y - topLeftY) / gridSize;
         col = (x - topLeftX) / gridSize;
-
-        //System.out.println("x: " + x + ", y: " + y);
-        //System.out.println("row: " + row + ", col: " + col);
     }
 
     public int getRow() {

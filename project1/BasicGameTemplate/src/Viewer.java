@@ -245,6 +245,22 @@ public class Viewer extends JPanel {
                         TextureToLoad = new File("../res/down_arrow.png");
                         break;
 
+                    case 'r':
+                        TextureToLoad = new File("../res/gray_right_arrow.png");
+                        break;
+
+                    case 'u':
+                        TextureToLoad = new File("../res/gray_up_arrow.png");
+                        break;
+
+                    case 'l':
+                        TextureToLoad = new File("../res/gray_left_arrow.png");
+                        break;
+
+                    case 'd':
+                        TextureToLoad = new File("../res/gray_down_arrow.png");
+                        break;
+
                     case 'F':
                         TextureToLoad = new File("../res/exit.png");
                         break;

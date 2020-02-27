@@ -125,16 +125,16 @@ public class Model {
             int col = (getX() - startX) / 40;
 
             // directional (arrow) tiles
-            if (Level[row][col] == 'R') {
+            if (Character.toUpperCase(Level[row][col]) == 'R') {
                 playerDirection = Direction.RIGHT;
                 setTargetX();
-            } else if (Level[row][col] == 'L') {
+            } else if (Character.toUpperCase(Level[row][col]) == 'L') {
                 playerDirection = Direction.LEFT;
                 setTargetX();
-            } else if (Level[row][col] == 'U') {
+            } else if (Character.toUpperCase(Level[row][col]) == 'U') {
                 playerDirection = Direction.UP;
                 setTargetY();
-            } else if (Level[row][col] == 'D') {
+            } else if (Character.toUpperCase(Level[row][col]) == 'D') {
                 playerDirection = Direction.DOWN;
                 setTargetY();
             }
