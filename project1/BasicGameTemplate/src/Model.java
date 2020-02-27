@@ -178,25 +178,25 @@ public class Model {
 
         //check for movement if player is not currently moving
         if (playerDirection == Direction.STILL) {
-            if (controller.isKeyAPressed()) {
+            if (controller.isKeyLeftPressed()) {
                 playerDirection = Direction.LEFT;
                 setTargetX();
                 if (targetX != getX()) {
                     Moves++;
                 }
-            } else if (controller.isKeyDPressed()) {
+            } else if (controller.isKeyRightPressed()) {
                 playerDirection = Direction.RIGHT;
                 setTargetX();
                 if (targetX != getX()) {
                     Moves++;
                 }
-            } else if (controller.isKeyWPressed()) {
+            } else if (controller.isKeyUpPressed()) {
                 playerDirection = Direction.UP;
                 setTargetY();
                 if (targetY != getY()) {
                     Moves++;
                 }
-            } else if (controller.isKeySPressed()) {
+            } else if (controller.isKeyDownPressed()) {
                 playerDirection = Direction.DOWN;
                 setTargetY();
                 if (targetY != getY()) {

@@ -30,11 +30,10 @@ import java.util.HashMap;
 
 //Singeton pattern
 public class Controller implements KeyListener {
-    private static boolean KeyAPressed     = false;
-    private static boolean KeySPressed     = false;
-    private static boolean KeyDPressed     = false;
-    private static boolean KeyWPressed     = false;
-    private static boolean KeySpacePressed = false;
+    private static boolean keyRightPressed = false;
+    private static boolean keyLeftPressed  = false;
+    private static boolean keyUpPressed    = false;
+    private static boolean keyDownPressed  = false;
 
     private static final Controller instance = new Controller();
 
@@ -54,81 +53,126 @@ public class Controller implements KeyListener {
     public void keyPressed(KeyEvent e) {
         switch (Character.toLowerCase(e.getKeyChar()))
         {
-            case 'a': setKeyAPressed(true); break;
+            case 'a': //setKeyAPressed(true); break;
+                setKeyLeftPressed(true);
+                break;
 
-            case 's': setKeySPressed(true); break;
+            case 's': //setKeySPressed(true); break;
+                setKeyDownPressed(true);
+                break;
 
-            case 'w': setKeyWPressed(true); break;
+            case 'w': //setKeyWPressed(true); break;
+                setKeyUpPressed(true);
+                break;
 
-            case 'd': setKeyDPressed(true); break;
-
-            case ' ': setKeySpacePressed(true); break;
+            case 'd': //setKeyDPressed(true); break;
+                setKeyRightPressed(true);
+                break;
 
             default:
-                //System.out.println("Controller test:  Unknown key pressed");
                 break;
         }
 
-        // You can implement to keep moving while pressing the key here .
+        switch (e.getKeyCode())
+        {
+            case KeyEvent.VK_UP:
+                setKeyUpPressed(true);
+                break;
+
+            case KeyEvent.VK_DOWN:
+                setKeyDownPressed(true);
+                break;
+
+            case KeyEvent.VK_LEFT:
+                setKeyLeftPressed(true);
+                break;
+
+            case KeyEvent.VK_RIGHT:
+                setKeyRightPressed(true);
+                break;
+
+            default:
+                break;
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         switch (Character.toLowerCase(e.getKeyChar()))
         {
-            case 'a': setKeyAPressed(false); break;
+            case 'a': //setKeyAPressed(true); break;
+                setKeyLeftPressed(false);
+                break;
 
-            case 's': setKeySPressed(false); break;
+            case 's': //setKeySPressed(true); break;
+                setKeyDownPressed(false);
+                break;
 
-            case 'w': setKeyWPressed(false); break;
+            case 'w': //setKeyWPressed(true); break;
+                setKeyUpPressed(false);
+                break;
 
-            case 'd': setKeyDPressed(false); break;
-
-            case ' ': setKeySpacePressed(false); break;
+            case 'd': //setKeyDPressed(true); break;
+                setKeyRightPressed(false);
+                break;
 
             default:
                 //System.out.println("Controller test:  Unknown key pressed");
                 break;
         }
+
+        switch (e.getKeyCode())
+        {
+            case KeyEvent.VK_UP:
+                setKeyUpPressed(false);
+                break;
+
+            case KeyEvent.VK_DOWN:
+                setKeyDownPressed(false);
+                break;
+
+            case KeyEvent.VK_LEFT:
+                setKeyLeftPressed(false);
+                break;
+
+            case KeyEvent.VK_RIGHT:
+                setKeyRightPressed(false);
+                break;
+
+            default:
+                break;
+        }
     }
 
-    public boolean isKeyAPressed() {
-        return KeyAPressed;
+    public boolean isKeyLeftPressed() {
+        return keyLeftPressed;
     }
 
-    public void setKeyAPressed(boolean keyAPressed) {
-        KeyAPressed = keyAPressed;
+    public boolean isKeyRightPressed() {
+        return keyRightPressed;
     }
 
-    public boolean isKeySPressed() {
-        return KeySPressed;
+    public boolean isKeyUpPressed() {
+        return keyUpPressed;
     }
 
-    public void setKeySPressed(boolean keySPressed) {
-        KeySPressed = keySPressed;
+    public boolean isKeyDownPressed() {
+        return keyDownPressed;
     }
 
-    public boolean isKeyDPressed() {
-        return KeyDPressed;
+    public void setKeyRightPressed(boolean b) {
+        keyRightPressed = b;
     }
 
-    public void setKeyDPressed(boolean keyDPressed) {
-        KeyDPressed = keyDPressed;
+    public void setKeyLeftPressed(boolean b) {
+        keyLeftPressed = b;
     }
 
-    public boolean isKeyWPressed() {
-        return KeyWPressed;
+    public void setKeyUpPressed(boolean b) {
+        keyUpPressed = b;
     }
 
-    public void setKeyWPressed(boolean keyWPressed) {
-        KeyWPressed = keyWPressed;
-    }
-
-    public boolean isKeySpacePressed() {
-        return KeySpacePressed;
-    }
-
-    public void setKeySpacePressed(boolean keySpacePressed) {
-        KeySpacePressed = keySpacePressed;
+    public void setKeyDownPressed(boolean b) {
+        keyDownPressed = b;
     }
 }
