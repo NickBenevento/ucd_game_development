@@ -10,16 +10,12 @@ import util.GameObject;
 
 public class Scoreboard extends JPanel {
     private JLabel Moves;
-    //private JLabel Time;
     private JLabel levelDisplay;
-    //private double elapsedTime;
     private int moves;
     private int level;
     DecimalFormat d2 = new DecimalFormat("0.0");
 
     public Scoreboard() {
-        /* start with 0 */
-        //elapsedTime = 0;
         /* sets the font */
         Font  scores = new Font("SansSerif", Font.BOLD, 28);
         Color back   = getBackground();
@@ -31,9 +27,6 @@ public class Scoreboard extends JPanel {
         Moves = new JLabel("Moves: " + moves);
         Moves.setPreferredSize(new Dimension(150, 50));
         Moves.setAlignmentX(CENTER_ALIGNMENT);
-        //Time = new JLabel("Time: " + d2.format(elapsedTime));
-        //Time.setPreferredSize(new Dimension(150, 100));
-        //Time.setAlignmentX(CENTER_ALIGNMENT);
         /* setting the font */
         Font font = new Font("SansSerif", Font.BOLD, 25);
         Moves.setFont(font);
@@ -43,14 +36,7 @@ public class Scoreboard extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         add(levelDisplay);
         add(Moves);
-        //add(Time);
-        //add(save);
     }
-
-    //public void updateTime(double time) {
-    //    elapsedTime += time;
-    //    Time.setText("Time: " + d2.format(elapsedTime) + "s");
-    //}
 
     public void setLevel(int level) {
         this.level = level;
@@ -62,31 +48,7 @@ public class Scoreboard extends JPanel {
         Moves.setText("Moves: " + this.moves);
     }
 
-    //public double getTime() {
-    //    return elapsedTime;
-    //}
-
-    //public void setTime(double time) {
-    //    elapsedTime = time;
-    //    Time.setText("Time: " + d2.format(elapsedTime));
-    //}
-
     public int getMoves() {
         return moves;
-    }
-
-    public void saveGame(int x, int y) {
-        String filename = "save.txt";
-
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-            writer.write(level + "\n");
-            writer.write(moves + "\n");
-            writer.write(x + "\n");
-            writer.write(y + "\n");
-            writer.close();
-        } catch (IOException e) {
-            System.out.println("The file could not be written");
-        }
     }
 }

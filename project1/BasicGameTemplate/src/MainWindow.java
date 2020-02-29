@@ -12,6 +12,10 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.FileReader;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -23,8 +27,6 @@ import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.JOptionPane;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import util.UnitTests;
 
 /*
@@ -52,37 +54,35 @@ import util.UnitTests;
  * (MIT LICENSE ) e.g do what you want with this :-)
  */
 
-
 public class MainWindow {
     private static JFrame frame = new JFrame("Game");           // Change to the name of your game
     private static Scoreboard scoreboard;                       // high scores for the game
-    private static Model gameworld   = new Model();
-    private static Viewer canvas     = new Viewer(gameworld);
-    private KeyListener Controller   = new Controller();
-    private MouseListener Mouse      = new Mouse();
-    private static int TargetFPS     = 100;
-    private static boolean startGame = false;
-    private String levelDisplayText;
+    private static JPanel LevelPicker = new JPanel();
+    private static Model gameworld    = new Model();
+    private static Viewer canvas      = new Viewer(gameworld);
+    private KeyListener Controller    = new Controller();
+    private MouseListener Mouse       = new Mouse();
+    private static int TargetFPS      = 100;
+    private static boolean startGame  = false;
 
     private JButton startMenuButton;
     private JButton load;                       // button to load a previous game
     private JButton pause;                      // button to resume the game
     private JButton save;
     private JButton quit;
+    private JButton chooseLevel;
     private ButtonListener buttonListener;          // listener for pause/play button
 
     LevelMaker levelMaker;                          // handles level creation
-    char[][][] Levels        = new char[10][][];
-    private int currentLevel = 0;
-    private int lastLevel    = 5;
+    char[][][] Levels             = new char[10][][];
+    private int currentLevel      = 0;
+    private int maxLevelCompleted = 0;
+    private int lastLevel         = 5;
 
     private Timer timer;
     private static TimerListener timerListener;
     private int cycleTime = 10;
-    //private long startTime;
-    //private long pauseTime      = 0;
-    //private long totalPauseTime = 0;
-
+    private String levelDisplayText;
 
     public MainWindow() {
         setUpLevels();
@@ -93,8 +93,6 @@ public class MainWindow {
         canvas.setBounds(0, 0, 1000, 1000);
 
         canvas.setLayout(new FlowLayout(FlowLayout.CENTER, 200, 500));
-
-        //canvas.updateview();
 
         startMenuButton = new JButton("New Game");        // start button
         startMenuButton.setPreferredSize(new Dimension(200, 40));
@@ -107,8 +105,6 @@ public class MainWindow {
 
         canvas.add(startMenuButton);
         canvas.add(load);
-        //frame.add(load);
-        //frame.add(startMenuButton);
         frame.add(canvas);
         canvas.setVisible(true);
         frame.setVisible(true);
@@ -125,14 +121,7 @@ public class MainWindow {
         // model update
         gameworld.gamelogic();
         // view update
-
         canvas.updateview();
-
-        //try {
-        //    Thread.sleep(5);
-        //} catch (InterruptedException e) {
-        //    System.out.println("Interruped Exception!");
-        //}
 
         scoreboard.setMoves(gameworld.getMoves());
         Toolkit.getDefaultToolkit().sync();
@@ -141,13 +130,10 @@ public class MainWindow {
     class TimerListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
-            //Object e = event.getSource();
             if (gameworld.finishedLevel()) {
-                currentLevel++;
-                loadNextLevel();
+                //currentLevel++;
+                loadLevel(currentLevel + 1, true);
             }
-            //scoreboard.setTime((System.currentTimeMillis() - startTime - totalPauseTime) / 1000.0);
-
             gameloop();
         }
     }
@@ -158,20 +144,25 @@ public class MainWindow {
             Object e = event.getSource();
 
             if (e == startMenuButton) {
+                // start a new game
                 setUpGame();
             } else if (e == load) {
+                // load a save file
                 loadGame();
             } else if (e == pause) {
-                /* if the button was clicked and the game is not paused, pause the game */
+                // pause the game
                 if (pause.getText().equals("Pause")) {
                     pauseGame();
+                    pause.setText("Play");
                 } else {
+                    pause.setText("Pause");
                     resumeGame();
                 }
             } else if (e == save) {
-                // the player can only save while they are still --> prevents exploits from saving/loading
+                // save the game
+                pauseGame();
+                // player can only save while they are still --> prevents exploits from saving/loading
                 if (gameworld.getDirection() == Model.Direction.STILL) {
-                    pauseGame();
                     try {
                         BufferedReader reader = new BufferedReader(new FileReader("save.txt"));
                         int            result = JOptionPane.showConfirmDialog(null, "There is already a save file. Are you sure you want to overwrite it?", "Save Prompt", JOptionPane.YES_NO_OPTION);
@@ -181,15 +172,11 @@ public class MainWindow {
                     } catch (IOException exc) {
                         saveGame();
                     }
-                    resumeGame();
                 } else {
-                    pauseGame();
                     JOptionPane.showMessageDialog(null, "You can't save the game while sliding!", "Save Error!", JOptionPane.ERROR_MESSAGE);
-                    resumeGame();
                 }
-            }
-            /* if they clicked the endgame button, stop the timer and exit */
-            else {
+                resumeGame();
+            } else if (e == quit) {
                 pauseGame();
                 int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to quit? Any progress not saved will be lost.", "Quit Prompt", JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {
@@ -198,6 +185,11 @@ public class MainWindow {
                 } else {
                     resumeGame();
                 }
+            } else if (e == chooseLevel) {
+                //
+                pauseGame();
+                LevelPicker.setVisible(true);
+                resumeGame();
             }
         }
     }
@@ -209,34 +201,33 @@ public class MainWindow {
 
         int result = JOptionPane.showConfirmDialog(null, "Would you like to restart from the beginning?", "End Game Prompt", JOptionPane.YES_NO_OPTION);
         if (result == JOptionPane.YES_OPTION) {
-            currentLevel     = 0;
             levelDisplayText = "Level " + (currentLevel + 1) + " completed!";
-            //startTime        = System.currentTimeMillis();
-            //pauseTime      = 0;
-            //totalPauseTime = 0;
+            currentLevel     = 0;
             gameworld.setMoves(0);
+
+            canvas.setLevel(Levels[currentLevel]);
+            gameworld.setLevel(Levels[currentLevel]);
+            scoreboard.setLevel(currentLevel);
+            gameworld.reset();
         } else {
             System.exit(0);
         }
     }
 
     public void pauseGame() {
-        //pauseTime = System.currentTimeMillis();
-        pause.setText("Play");
         timer.stop();
     }
 
     public void resumeGame() {
-        pause.setText("Pause");
-        //long temp = pauseTime;
-        //pauseTime       = System.currentTimeMillis() - temp;
-        //totalPauseTime += pauseTime;
         timer.start();
     }
 
     public void setUpGame() {
         levelDisplayText = "Level " + (currentLevel + 1) + " completed!";
         canvas.setStartScreen(false);
+        LevelPicker.setBounds(1000, 400, 200, 200);
+        LevelPicker.setVisible(false);
+        addLevels();
 
         save = new JButton("Save Game");
         save.addActionListener(buttonListener);
@@ -267,6 +258,10 @@ public class MainWindow {
         quit.setFocusable(false);
         quit.addActionListener(buttonListener);
 
+        chooseLevel = new JButton("Choose Level");
+        chooseLevel.setFocusable(false);
+        chooseLevel.addActionListener(buttonListener);
+
         timerListener = new TimerListener();
         timer         = new Timer(cycleTime, timerListener); // timer listener will fire every 10 milliseconds
         timer.start();
@@ -274,40 +269,60 @@ public class MainWindow {
         scoreboard.add(pause);
         scoreboard.add(save);
         scoreboard.add(quit);
+        scoreboard.add(chooseLevel);
+        scoreboard.add(LevelPicker);
+        //frame.add(LevelPicker);
 
         frame.setSize(1300, 1000);
         frame.add(scoreboard);
 
-        //startTime = System.currentTimeMillis();
         startGame = true;
     }
 
-    public void loadNextLevel() {
-        canvas.setBlackScreen(true);
-
-        levelDisplayText = "Level " + (currentLevel) + " completed!";
-        canvas.setDisplayText(levelDisplayText, false);
-        canvas.updateview();
-
-        if (currentLevel == lastLevel) {
-            endgame();
-        }
-
+    public void loadLevel(int levelToLoad, boolean showCompletedScreen) {
+        currentLevel = levelToLoad;
+        System.out.println("current level: " + currentLevel);
+        System.out.println("to load: " + levelToLoad);
         pauseGame();
-        canvas.setLevel(Levels[currentLevel]);
+        //currentLevel = levelToLoad;
 
-        gameworld.setLevel(Levels[currentLevel]);
-        scoreboard.setLevel(currentLevel);
-        gameworld.reset();
+        //if (levelToLoad > maxLevelCompleted) {
+        //    maxLevelCompleted = levelToLoad;
+        //    addLevels();
+        //    System.out.println("to load: " + levelToLoad);
+        //    System.out.println("max: " + maxLevelCompleted);
+        //}
 
-        // Lets the player save after completing the level
-        if (currentLevel != 0) {
-            int result = JOptionPane.showConfirmDialog(null, "Do you want to save your progress?", "Save Prompt", JOptionPane.YES_NO_OPTION);
-            if (result == JOptionPane.YES_OPTION) {
-                saveGame();
-            }
+        if (levelToLoad <= lastLevel) {
+            canvas.setLevel(Levels[levelToLoad]);
+            gameworld.setLevel(Levels[levelToLoad]);
+            scoreboard.setLevel(levelToLoad);
+            gameworld.reset();
         }
-        canvas.setBlackScreen(false);
+
+        //if (showCompletedScreen) {
+        if (levelToLoad > maxLevelCompleted) {
+            canvas.setBlackScreen(true);
+            levelDisplayText = "Level " + levelToLoad + " completed!";
+            canvas.setDisplayText(levelDisplayText, false);
+            canvas.updateview();
+
+            if (levelToLoad > lastLevel) {
+                endgame();
+            } else {
+                maxLevelCompleted = levelToLoad;
+                addLevels();
+                System.out.println("to load: " + levelToLoad);
+                System.out.println("max: " + maxLevelCompleted);
+                // Lets the player save after completing the level
+                int result = JOptionPane.showConfirmDialog(null, "Do you want to save your progress?", "Save Prompt", JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION) {
+                    saveGame();
+                }
+            }
+            canvas.setBlackScreen(false);
+        }
+        //currentLevel = levelToLoad;
         resumeGame();
     }
 
@@ -323,17 +338,15 @@ public class MainWindow {
             canvas.setDisplayText(levelDisplayText, false);
             scoreboard.setLevel(currentLevel);
 
+
+            str = reader.readLine();
+            maxLevelCompleted = Integer.parseInt(str);
+            addLevels();
+
             str = reader.readLine();
             int moves = Integer.parseInt(str);
             scoreboard.setMoves(moves);
             gameworld.setMoves(moves);
-
-            //str = reader.readLine();
-            //scoreboard.setTime(Double.parseDouble(str));
-            //startTime = Long.parseLong(str);
-
-            //str            = reader.readLine();
-            //totalPauseTime = Long.parseLong(str);
 
             str = reader.readLine();
             gameworld.getPlayer().getCentre().setX(Integer.parseInt(str));
@@ -353,11 +366,46 @@ public class MainWindow {
         int x = gameworld.getX();
         int y = gameworld.getY();
 
-        scoreboard.saveGame(x, y);
+        String filename = "save.txt";
+
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+            writer.write(currentLevel + "\n");
+            writer.write(maxLevelCompleted + "\n");
+            writer.write(scoreboard.getMoves() + "\n");
+            writer.write(x + "\n");
+            writer.write(y + "\n");
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("The file could not be written");
+        }
     }
 
     public void setUpLevels() {
         levelMaker = new LevelMaker();
         levelMaker.makeLevels(Levels);
+    }
+
+    public void addLevels() {
+        //final int[] levelButtons = new int[];
+        LevelPicker.removeAll();
+        for (int i = 0; i <= lastLevel; i++) {
+            JButton button = new JButton("" + (i + 1));
+            button.setPreferredSize(new Dimension(50, 50));
+            button.setFocusable(false);
+            //levelButtons[i] = i;
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JButton temp = (JButton)e.getSource();
+                    int level    = Integer.parseInt(temp.getText()) - 1;
+                    loadLevel(level, false);
+                }
+            });
+            if (i > maxLevelCompleted) {
+                button.setEnabled(false);
+            }
+            LevelPicker.add(button);
+        }
     }
 }
