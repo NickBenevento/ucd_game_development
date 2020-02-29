@@ -1,5 +1,6 @@
 import java.awt.FlowLayout;
 import java.awt.CardLayout;
+import java.awt.GridLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
@@ -26,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.JOptionPane;
+import javax.swing.BorderFactory;
 
 import util.UnitTests;
 
@@ -58,12 +60,13 @@ public class MainWindow {
     private static JFrame frame = new JFrame("Game");           // Change to the name of your game
     private static Scoreboard scoreboard;                       // high scores for the game
     private static JPanel LevelPicker = new JPanel();
-    private static Model gameworld    = new Model();
-    private static Viewer canvas      = new Viewer(gameworld);
-    private KeyListener Controller    = new Controller();
-    private MouseListener Mouse       = new Mouse();
-    private static int TargetFPS      = 100;
-    private static boolean startGame  = false;
+    private JButton hideLevelPicker;
+    private static Model gameworld   = new Model();
+    private static Viewer canvas     = new Viewer(gameworld);
+    private KeyListener Controller   = new Controller();
+    private MouseListener Mouse      = new Mouse();
+    private static int TargetFPS     = 100;
+    private static boolean startGame = false;
 
     private JButton startMenuButton;
     private JButton load;                       // button to load a previous game
@@ -130,8 +133,8 @@ public class MainWindow {
     class TimerListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
+            // load the next level if the current one is completed
             if (gameworld.finishedLevel()) {
-                //currentLevel++;
                 loadLevel(currentLevel + 1, true);
             }
             gameloop();
@@ -170,6 +173,7 @@ public class MainWindow {
                             saveGame();
                         }
                     } catch (IOException exc) {
+                        // automatically save if there is no save file
                         saveGame();
                     }
                 } else {
@@ -177,6 +181,7 @@ public class MainWindow {
                 }
                 resumeGame();
             } else if (e == quit) {
+                // quitting the game
                 pauseGame();
                 int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to quit? Any progress not saved will be lost.", "Quit Prompt", JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {
@@ -188,6 +193,7 @@ public class MainWindow {
             } else if (e == chooseLevel) {
                 //
                 pauseGame();
+                //scoreboard.setBounds(1000, 0, 300, 1000);
                 LevelPicker.setVisible(true);
                 resumeGame();
             }
@@ -225,9 +231,14 @@ public class MainWindow {
     public void setUpGame() {
         levelDisplayText = "Level " + (currentLevel + 1) + " completed!";
         canvas.setStartScreen(false);
-        LevelPicker.setBounds(1000, 400, 200, 200);
+        //LevelPicker.setLayout(new GridLayout(0, 3, 20, 20));
+        LevelPicker.setLayout(new FlowLayout(0, 30, 30));
+        LevelPicker.setBounds(1020, 550, 300, 300);
         LevelPicker.setVisible(false);
+        //LevelPicker.setLayout(new FlowLayout());
+        //LevelPicker.setBounds(1000, 500, 150, 150);
         addLevels();
+
 
         save = new JButton("Save Game");
         save.addActionListener(buttonListener);
@@ -241,13 +252,15 @@ public class MainWindow {
         canvas.setVisible(true);
         canvas.addKeyListener(Controller); //adding the controller to the Canvas
         canvas.addMouseListener(Mouse);
-        canvas.requestFocusInWindow();     // making sure that the Canvas is in focus so keyboard input will be taking in .
+        canvas.requestFocusInWindow();     // making sure the Canvas is in focus for keyboard input
 
         canvas.setLevel(Levels[currentLevel]);
         gameworld.setLevel(Levels[currentLevel]);
         gameworld.setCanvas(canvas);
 
         scoreboard = new Scoreboard();
+        scoreboard.setLayout(new GridLayout(0, 1, 80, 40));
+        scoreboard.setBorder(BorderFactory.createEmptyBorder(0, 80, 0, 80));
         scoreboard.setLevel(currentLevel);
 
         pause = new JButton("Pause");
@@ -270,8 +283,15 @@ public class MainWindow {
         scoreboard.add(save);
         scoreboard.add(quit);
         scoreboard.add(chooseLevel);
-        scoreboard.add(LevelPicker);
-        //frame.add(LevelPicker);
+        //scoreboard.add(LevelPicker);
+        frame.add(LevelPicker);
+        //JButton spacing  = new JButton();
+        //JButton spacing2 = new JButton();
+        //spacing.setVisible(false);
+        //spacing2.setVisible(false);
+        //scoreboard.add(spacing);
+        //scoreboard.add(spacing2);
+        //scoreboard.add(hideLevelPicker);
 
         frame.setSize(1300, 1000);
         frame.add(scoreboard);
@@ -280,19 +300,11 @@ public class MainWindow {
     }
 
     public void loadLevel(int levelToLoad, boolean showCompletedScreen) {
+        // the current level the player is on is the one we want to load
         currentLevel = levelToLoad;
-        System.out.println("current level: " + currentLevel);
-        System.out.println("to load: " + levelToLoad);
         pauseGame();
-        //currentLevel = levelToLoad;
 
-        //if (levelToLoad > maxLevelCompleted) {
-        //    maxLevelCompleted = levelToLoad;
-        //    addLevels();
-        //    System.out.println("to load: " + levelToLoad);
-        //    System.out.println("max: " + maxLevelCompleted);
-        //}
-
+        // make sure the levelToLoad exists
         if (levelToLoad <= lastLevel) {
             canvas.setLevel(Levels[levelToLoad]);
             gameworld.setLevel(Levels[levelToLoad]);
@@ -300,20 +312,19 @@ public class MainWindow {
             gameworld.reset();
         }
 
-        //if (showCompletedScreen) {
+        // only provide the save option if the level hasn't been completed before
         if (levelToLoad > maxLevelCompleted) {
             canvas.setBlackScreen(true);
             levelDisplayText = "Level " + levelToLoad + " completed!";
             canvas.setDisplayText(levelDisplayText, false);
             canvas.updateview();
 
+            // if the player completed the last level
             if (levelToLoad > lastLevel) {
                 endgame();
             } else {
                 maxLevelCompleted = levelToLoad;
                 addLevels();
-                System.out.println("to load: " + levelToLoad);
-                System.out.println("max: " + maxLevelCompleted);
                 // Lets the player save after completing the level
                 int result = JOptionPane.showConfirmDialog(null, "Do you want to save your progress?", "Save Prompt", JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {
@@ -322,7 +333,6 @@ public class MainWindow {
             }
             canvas.setBlackScreen(false);
         }
-        //currentLevel = levelToLoad;
         resumeGame();
     }
 
@@ -358,6 +368,7 @@ public class MainWindow {
 
             reader.close();
         } catch (IOException exc) {
+            // if no save file was found
             JOptionPane.showMessageDialog(null, "No save file found!", "Load Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -387,25 +398,41 @@ public class MainWindow {
     }
 
     public void addLevels() {
-        //final int[] levelButtons = new int[];
         LevelPicker.removeAll();
+        //LevelPicker.setLayout(new FlowLayout());
+        //LevelPicker.setBounds(1000, 500, 150, 150);
         for (int i = 0; i <= lastLevel; i++) {
             JButton button = new JButton("" + (i + 1));
             button.setPreferredSize(new Dimension(50, 50));
             button.setFocusable(false);
-            //levelButtons[i] = i;
+            // add a listener for each button
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    // get the number of the button that was clicked and load that level
                     JButton temp = (JButton)e.getSource();
                     int level    = Integer.parseInt(temp.getText()) - 1;
                     loadLevel(level, false);
                 }
             });
+            // make sure the player can't load levels they haven't reached yet
             if (i > maxLevelCompleted) {
                 button.setEnabled(false);
             }
             LevelPicker.add(button);
         }
+
+        hideLevelPicker = new JButton("Hide Level Picker");
+        hideLevelPicker.setFocusable(false);
+
+        hideLevelPicker.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // get the number of the button that was clicked and load that level
+                LevelPicker.setVisible(false);
+            }
+        });
+
+        LevelPicker.add(hideLevelPicker);
     }
 }
