@@ -1,3 +1,6 @@
+/* Nick Benevento
+ * 19207773
+ */
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -32,9 +35,10 @@ import util.Vector3f;
  */
 public class Model {
     private GameObject Player;
+    private Viewer canvas;
     private Controller controller = Controller.getInstance();
+    private Mouse mouse           = Mouse.getInstance();
     private CopyOnWriteArrayList <GameObject> EnemiesList = new CopyOnWriteArrayList <GameObject>();
-    private CopyOnWriteArrayList <GameObject> BulletList  = new CopyOnWriteArrayList <GameObject>();
     private char[][] Level;
     private int cellSize = 40;
     private int startX   = 86;
@@ -63,25 +67,89 @@ public class Model {
         resetTargetPosition();
     }
 
+    public void setCanvas(Viewer canvas) {
+        this.canvas = canvas;
+    }
+
     public void setLevel(char[][] Level) {
         this.Level = Level;
     }
 
     // This is the heart of the game , where the model takes in all the inputs ,decides the outcomes and then changes the model accordingly.
     public void gamelogic() {
-        playerLogic();
+        checkForMouse();
+        checkForMovement();
     }
 
-    private void playerLogic() {
+    private void checkForMouse() {
+        // mouse input
+        int r = mouse.getRow();
+        int c = mouse.getCol();
+
+        switch (Level[r][c])
+        {
+            case 'R':
+                Level[r][c] = 'U';
+                mouse.setRow(0);
+                mouse.setCol(0);
+                canvas.updateCell(r, c, "../res/up_arrow.png");
+                break;
+
+            case 'U':
+                Level[r][c] = 'L';
+                mouse.setRow(0);
+                mouse.setCol(0);
+                canvas.updateCell(r, c, "../res/left_arrow.png");
+                break;
+
+            case 'L':
+                Level[r][c] = 'D';
+                mouse.setRow(0);
+                mouse.setCol(0);
+                canvas.updateCell(r, c, "../res/down_arrow.png");
+                break;
+
+            case 'D':
+                Level[r][c] = 'R';
+                mouse.setRow(0);
+                mouse.setCol(0);
+                canvas.updateCell(r, c, "../res/right_arrow.png");
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void checkForMovement() {
+        // movement key input
         if (getX() == targetX && getY() == targetY) {
-            playerDirection = Direction.STILL;
-            // check if player is at finish tile or fell in a hole
             int row = ((getY() - 56) / 40) - 1;
             int col = (getX() - startX) / 40;
+
+            // directional (arrow) tiles
+            if (Character.toUpperCase(Level[row][col]) == 'R') {
+                playerDirection = Direction.RIGHT;
+                setTargetX();
+            } else if (Character.toUpperCase(Level[row][col]) == 'L') {
+                playerDirection = Direction.LEFT;
+                setTargetX();
+            } else if (Character.toUpperCase(Level[row][col]) == 'U') {
+                playerDirection = Direction.UP;
+                setTargetY();
+            } else if (Character.toUpperCase(Level[row][col]) == 'D') {
+                playerDirection = Direction.DOWN;
+                setTargetY();
+            }
+
+            // need to re-check because a directional tile could have been hit
+            if (getX() == targetX && getY() == targetY) {
+                playerDirection = Direction.STILL;
+            }
+
+            // check if player is at finish tile or fell in a hole
             if (Level[row][col] == 'F') {
-                System.out.println("You won!");
                 finishedLevel = true;
-                //resetTargetPosition();
             } else if (Level[row][col] == 'O') {
                 resetStartPosition();
                 resetTargetPosition();
@@ -113,25 +181,25 @@ public class Model {
 
         //check for movement if player is not currently moving
         if (playerDirection == Direction.STILL) {
-            if (Controller.getInstance().isKeyAPressed()) {
+            if (controller.isKeyLeftPressed()) {
                 playerDirection = Direction.LEFT;
                 setTargetX();
                 if (targetX != getX()) {
                     Moves++;
                 }
-            } else if (Controller.getInstance().isKeyDPressed()) {
+            } else if (controller.isKeyRightPressed()) {
                 playerDirection = Direction.RIGHT;
                 setTargetX();
                 if (targetX != getX()) {
                     Moves++;
                 }
-            } else if (Controller.getInstance().isKeyWPressed()) {
+            } else if (controller.isKeyUpPressed()) {
                 playerDirection = Direction.UP;
                 setTargetY();
                 if (targetY != getY()) {
                     Moves++;
                 }
-            } else if (Controller.getInstance().isKeySPressed()) {
+            } else if (controller.isKeyDownPressed()) {
                 playerDirection = Direction.DOWN;
                 setTargetY();
                 if (targetY != getY()) {

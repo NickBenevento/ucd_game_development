@@ -1,3 +1,6 @@
+/* Nick Benevento
+ * 19207773
+ */
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -44,16 +47,18 @@ import util.GameObject;
  */
 public class Viewer extends JPanel {
     private long CurrentAnimationTime = 0;
-    private char[][] grid;
-    Model gameworld = new Model();
-    BackgroundGrid gameSpace;
+    private char[][] Level;
+    private Model gameworld = new Model();
+    private BackgroundLevel gameSpace;
     private boolean setBlackScreen = false;
     private String displayText;
-    //private int currentLevel       = 0;
+    private boolean endGame     = false;
+    private boolean startScreen = true;
+    private static int gridSize = 40;
 
     public Viewer(Model World) {
         this.gameworld = World;
-        gameSpace      = new BackgroundGrid();
+        gameSpace      = new BackgroundLevel();
         gameSpace.setBounds(0, 0, 1000, 1000);
         // TODO Auto-generated constructor stub
     }
@@ -73,17 +78,22 @@ public class Viewer extends JPanel {
         // TODO Auto-generated constructor stub
     }
 
+    public BackgroundLevel getGameSpace() {
+        return gameSpace;
+    }
+
     public void setBlackScreen(boolean b) {
         setBlackScreen = b;
     }
 
-    public void setDisplayText(String text) {
+    public void setDisplayText(String text, boolean b) {
         displayText = text;
+        endGame     = b;
     }
 
-    //public void setCurrentLevel(int level) {
-    //    currentLevel = level;
-    //}
+    public void setStartScreen(boolean b) {
+        startScreen = b;
+    }
 
     public void updateview() {
         this.repaint();
@@ -94,6 +104,7 @@ public class Viewer extends JPanel {
         super.paintComponent(g);
         CurrentAnimationTime++;         // runs animation time step
 
+        // for inbetween levels
         if (setBlackScreen) {
             File blackScreen = new File("../res/blackScreen.png");
             try {
@@ -106,6 +117,10 @@ public class Viewer extends JPanel {
             g.setFont(new Font("SansSerif", Font.BOLD, 30));
             g.setColor(Color.WHITE);
             g.drawString(displayText, 300, 300);
+            if (endGame) {
+                g.setColor(Color.GREEN);
+                g.drawString("Congratulations! You beat the game!", 300, 400);
+            }
             return;
         }
         //Draw player Game Object
@@ -118,9 +133,16 @@ public class Viewer extends JPanel {
         //Draw background
         drawBackground(g);
 
-        g.drawImage(gameSpace.background, 0, 0, null);
+        if (startScreen) {
+            g.setFont(new Font("SansSerif", Font.BOLD, 30));
+            g.setColor(Color.BLACK);
+            String title = "The Adventures of Stanley the Seal";
+            g.drawString(title, 200, 300);
+        } else {
+            g.drawImage(gameSpace.background, 0, 0, null);
 
-        drawPlayer(x, y, width, height, texture, g);
+            drawPlayer(x, y, width, height, texture, g);
+        }
     }
 
     private void drawBackground(Graphics g) {
@@ -142,7 +164,7 @@ public class Viewer extends JPanel {
         exit = new File("../res/exit.png");
         try {
             Image myImage = ImageIO.read(exit);
-            g.drawImage(myImage, 620, 60, 40, 40, null);
+            g.drawImage(myImage, 620, 60, gridSize, gridSize, null);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -164,36 +186,96 @@ public class Viewer extends JPanel {
         }
     }
 
-    public void setLevel(char[][] grid) {
-        if (grid == null) {
-            System.out.println("Level is null");
+    public void updateCell(int row, int col, String imagePath) {
+        int x = gridSize * col + 100;
+        int y = gridSize * row + 100;
+
+        try {
+            Image image = ImageIO.read(new File(imagePath));
+
+            gameSpace.addSquare(image, x, y);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void setLevel(char[][] Level) {
+        if (Level == null) {
+            System.out.println("Level is null ");
             return;
         }
-        this.grid = grid;
-        gameSpace.clearGrid();
+        this.Level = Level;
+        gameSpace.clearLevel();
         int x = 100;
         int y = 100;
 
         File TextureToLoad;
 
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                if (grid[i][j] == 'X') {
-                    //TextureToLoad = new File("../res/ice_block.png");
-                    TextureToLoad = new File("../res/iceblock.png");
-                } else if (grid[i][j] == 'G') {
-                    TextureToLoad = new File("../res/ground.png");
-                } else if (grid[i][j] == 'B') {
-                    TextureToLoad = new File("../res/boulder.png");
-                } else if (grid[i][j] == 'O') {
-                    TextureToLoad = new File("../res/hole.png");
-                } else if (grid[i][j] == 'F') {
-                    TextureToLoad = new File("../res/exit.png");
-                } else if (grid[i][j] == 'T') {
-                    TextureToLoad = new File("../res/blank.png");
-                } else {
-                    System.out.println("grid char not recognized");
-                    TextureToLoad = new File("../res/blankSprite.png");
+        for (int i = 0; i < Level.length; i++) {
+            for (int j = 0; j < Level[i].length; j++) {
+                switch (Level[i][j])
+                {
+                    case 'X':
+                        TextureToLoad = new File("../res/iceblock.png");
+                        break;
+
+                    case 'G':
+                        TextureToLoad = new File("../res/ground.png");
+                        break;
+
+                    case 'B':
+                        TextureToLoad = new File("../res/boulder.png");
+                        break;
+
+                    case 'O':
+                        TextureToLoad = new File("../res/hole.png");
+                        break;
+
+                    case 'R':
+                        TextureToLoad = new File("../res/right_arrow.png");
+                        break;
+
+                    case 'U':
+                        TextureToLoad = new File("../res/up_arrow.png");
+                        break;
+
+                    case 'L':
+                        TextureToLoad = new File("../res/left_arrow.png");
+                        break;
+
+                    case 'D':
+                        TextureToLoad = new File("../res/down_arrow.png");
+                        break;
+
+                    case 'r':
+                        TextureToLoad = new File("../res/gray_right_arrow.png");
+                        break;
+
+                    case 'u':
+                        TextureToLoad = new File("../res/gray_up_arrow.png");
+                        break;
+
+                    case 'l':
+                        TextureToLoad = new File("../res/gray_left_arrow.png");
+                        break;
+
+                    case 'd':
+                        TextureToLoad = new File("../res/gray_down_arrow.png");
+                        break;
+
+                    case 'F':
+                        TextureToLoad = new File("../res/exit.png");
+                        break;
+
+                    case 'T':
+                        TextureToLoad = new File("../res/blank.png");
+                        break;
+
+                    default:
+                        System.out.println("Level char not recognized ");
+                        TextureToLoad = new File("../res/blankSprite.png");
+                        break;
                 }
 
                 try {
@@ -203,29 +285,29 @@ public class Viewer extends JPanel {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                x += 40;
+                x += gridSize;
             }
-            y += 40;
+            y += gridSize;
             x  = 100;
         }
     }
 
-    static class BackgroundGrid extends JPanel {
+    static class BackgroundLevel extends JPanel {
         private final static int size = 1000;
         private BufferedImage background;
 
-        public BackgroundGrid() {
+        public BackgroundLevel() {
             background = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
         }
 
-        public void clearGrid() {
+        public void clearLevel() {
             background = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
         }
 
         public void addSquare(Image image, int x, int y) {
             Graphics2D g = (Graphics2D)background.getGraphics();
 
-            g.drawImage(image, x, y, 40, 40, null);
+            g.drawImage(image, x, y, gridSize, gridSize, null);
             repaint();
         }
 
