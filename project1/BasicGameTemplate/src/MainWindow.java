@@ -165,6 +165,9 @@ public class MainWindow {
                     resumeGame();
                 }
             } else if (e == save) {
+                if (gameIsPaused()) {
+                    return;
+                }
                 // save the game
                 pauseGame();
                 // player can only save while they are still --> prevents exploits from saving/loading
@@ -184,6 +187,9 @@ public class MainWindow {
                 }
                 resumeGame();
             } else if (e == quit) {
+                //if (gameIsPaused()) {
+                //    return;
+                //}
                 // quitting the game
                 pauseGame();
                 int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to quit? Any progress not saved will be lost.", "Quit Prompt", JOptionPane.YES_NO_OPTION);
@@ -193,7 +199,11 @@ public class MainWindow {
                 } else {
                     resumeGame();
                 }
+                pause.setText("Pause");
             } else if (e == chooseLevel) {
+                if (gameIsPaused()) {
+                    return;
+                }
                 pauseGame();
                 LevelPicker.setVisible(true);
                 resumeGame();
@@ -226,6 +236,10 @@ public class MainWindow {
 
     public void resumeGame() {
         timer.start();
+    }
+
+    public boolean gameIsPaused() {
+        return pause.getText().equals("Play");
     }
 
     public void setUpGame() {
@@ -400,6 +414,9 @@ public class MainWindow {
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    if (pause.getText().equals("Play")) {
+                        return;
+                    }
                     // get the number of the button that was clicked and load that level
                     JButton temp = (JButton)e.getSource();
                     int level    = Integer.parseInt(temp.getText()) - 1;
@@ -419,6 +436,9 @@ public class MainWindow {
         hideLevelPicker.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (gameIsPaused()) {
+                    return;
+                }
                 LevelPicker.setVisible(false);
             }
         });
