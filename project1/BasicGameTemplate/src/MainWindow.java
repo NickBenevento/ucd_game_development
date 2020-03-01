@@ -1,3 +1,7 @@
+/* Nick Benevento
+ * 19207773
+ */
+
 import java.awt.FlowLayout;
 import java.awt.CardLayout;
 import java.awt.GridLayout;
@@ -57,8 +61,8 @@ import util.UnitTests;
  */
 
 public class MainWindow {
-    private static JFrame frame = new JFrame("Game");           // Change to the name of your game
-    private static Scoreboard scoreboard;                       // high scores for the game
+    private static JFrame frame = new JFrame("The Adventures of Stanley the Seal");
+    private static Scoreboard scoreboard;                                           // high scores for the game
     private static JPanel LevelPicker = new JPanel();
     private JButton hideLevelPicker;
     private static Model gameworld   = new Model();
@@ -68,7 +72,7 @@ public class MainWindow {
     private static int TargetFPS     = 100;
     private static boolean startGame = false;
 
-    private JButton startMenuButton;
+    private JButton newGame;
     private JButton load;                       // button to load a previous game
     private JButton pause;                      // button to resume the game
     private JButton save;
@@ -97,16 +101,16 @@ public class MainWindow {
 
         canvas.setLayout(new FlowLayout(FlowLayout.CENTER, 200, 500));
 
-        startMenuButton = new JButton("New Game");        // start button
-        startMenuButton.setPreferredSize(new Dimension(200, 40));
+        newGame = new JButton("New Game");        // start button
+        newGame.setPreferredSize(new Dimension(200, 40));
         load = new JButton("Load Game");
         load.setPreferredSize(new Dimension(200, 40));
 
         buttonListener = new ButtonListener();
         load.addActionListener(buttonListener);
-        startMenuButton.addActionListener(buttonListener);
+        newGame.addActionListener(buttonListener);
 
-        canvas.add(startMenuButton);
+        canvas.add(newGame);
         canvas.add(load);
         frame.add(canvas);
         canvas.setVisible(true);
@@ -126,7 +130,6 @@ public class MainWindow {
         // view update
         canvas.updateview();
 
-        scoreboard.setMoves(gameworld.getMoves());
         Toolkit.getDefaultToolkit().sync();
     }
 
@@ -146,7 +149,7 @@ public class MainWindow {
         public void actionPerformed(ActionEvent event) {
             Object e = event.getSource();
 
-            if (e == startMenuButton) {
+            if (e == newGame) {
                 // start a new game
                 setUpGame();
             } else if (e == load) {
@@ -191,9 +194,7 @@ public class MainWindow {
                     resumeGame();
                 }
             } else if (e == chooseLevel) {
-                //
                 pauseGame();
-                //scoreboard.setBounds(1000, 0, 300, 1000);
                 LevelPicker.setVisible(true);
                 resumeGame();
             }
@@ -205,16 +206,15 @@ public class MainWindow {
 
         canvas.updateview();
 
-        int result = JOptionPane.showConfirmDialog(null, "Would you like to restart from the beginning?", "End Game Prompt", JOptionPane.YES_NO_OPTION);
+        int result = JOptionPane.showConfirmDialog(null, "Would you like to restart from the beginning? Your progress will be saved. (Choosing 'No' will close the game)", "End Game Prompt", JOptionPane.YES_NO_OPTION);
         if (result == JOptionPane.YES_OPTION) {
             levelDisplayText = "Level " + (currentLevel + 1) + " completed!";
             currentLevel     = 0;
-            gameworld.setMoves(0);
-
             canvas.setLevel(Levels[currentLevel]);
             gameworld.setLevel(Levels[currentLevel]);
             scoreboard.setLevel(currentLevel);
             gameworld.reset();
+            saveGame();
         } else {
             System.exit(0);
         }
@@ -231,14 +231,10 @@ public class MainWindow {
     public void setUpGame() {
         levelDisplayText = "Level " + (currentLevel + 1) + " completed!";
         canvas.setStartScreen(false);
-        //LevelPicker.setLayout(new GridLayout(0, 3, 20, 20));
         LevelPicker.setLayout(new FlowLayout(0, 30, 30));
         LevelPicker.setBounds(1020, 550, 300, 300);
-        LevelPicker.setVisible(false);
-        //LevelPicker.setLayout(new FlowLayout());
-        //LevelPicker.setBounds(1000, 500, 150, 150);
+        LevelPicker.setVisible(true);
         addLevels();
-
 
         save = new JButton("Save Game");
         save.addActionListener(buttonListener);
@@ -246,7 +242,7 @@ public class MainWindow {
         save.setFocusable(false);
 
         // remove the start menu buttons
-        startMenuButton.setVisible(false);
+        newGame.setVisible(false);
         load.setVisible(false);
 
         canvas.setVisible(true);
@@ -283,15 +279,7 @@ public class MainWindow {
         scoreboard.add(save);
         scoreboard.add(quit);
         scoreboard.add(chooseLevel);
-        //scoreboard.add(LevelPicker);
         frame.add(LevelPicker);
-        //JButton spacing  = new JButton();
-        //JButton spacing2 = new JButton();
-        //spacing.setVisible(false);
-        //spacing2.setVisible(false);
-        //scoreboard.add(spacing);
-        //scoreboard.add(spacing2);
-        //scoreboard.add(hideLevelPicker);
 
         frame.setSize(1300, 1000);
         frame.add(scoreboard);
@@ -332,7 +320,13 @@ public class MainWindow {
                 }
             }
             canvas.setBlackScreen(false);
+            canvas.updateview();
+
+            if (levelToLoad == 3) {
+                JOptionPane.showMessageDialog(null, "Use the mouse to click on the directional tiles");
+            }
         }
+
         resumeGame();
     }
 
@@ -341,6 +335,8 @@ public class MainWindow {
             BufferedReader reader = new BufferedReader(new FileReader("save.txt"));
             setUpGame();
             String str;
+
+            // get current level
             str          = reader.readLine();
             currentLevel = Integer.parseInt(str);
             gameworld.setLevel(Levels[currentLevel]);
@@ -348,19 +344,16 @@ public class MainWindow {
             canvas.setDisplayText(levelDisplayText, false);
             scoreboard.setLevel(currentLevel);
 
-
+            // get max level completed
             str = reader.readLine();
             maxLevelCompleted = Integer.parseInt(str);
             addLevels();
 
-            str = reader.readLine();
-            int moves = Integer.parseInt(str);
-            scoreboard.setMoves(moves);
-            gameworld.setMoves(moves);
-
+            // get player x coordinate
             str = reader.readLine();
             gameworld.getPlayer().getCentre().setX(Integer.parseInt(str));
 
+            // get player y coordinate
             str = reader.readLine();
             gameworld.getPlayer().getCentre().setY(Integer.parseInt(str));
 
@@ -383,7 +376,6 @@ public class MainWindow {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
             writer.write(currentLevel + "\n");
             writer.write(maxLevelCompleted + "\n");
-            writer.write(scoreboard.getMoves() + "\n");
             writer.write(x + "\n");
             writer.write(y + "\n");
             writer.close();
@@ -399,8 +391,7 @@ public class MainWindow {
 
     public void addLevels() {
         LevelPicker.removeAll();
-        //LevelPicker.setLayout(new FlowLayout());
-        //LevelPicker.setBounds(1000, 500, 150, 150);
+
         for (int i = 0; i <= lastLevel; i++) {
             JButton button = new JButton("" + (i + 1));
             button.setPreferredSize(new Dimension(50, 50));
@@ -428,7 +419,6 @@ public class MainWindow {
         hideLevelPicker.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // get the number of the button that was clicked and load that level
                 LevelPicker.setVisible(false);
             }
         });

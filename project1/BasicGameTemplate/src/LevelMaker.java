@@ -1,3 +1,6 @@
+/* Nick Benevento
+ * 19207773
+ */
 public class LevelMaker {
     /* Char meanings:
      * T: transparent tile (invisible)
@@ -7,6 +10,9 @@ public class LevelMaker {
      * L, R, U, D --> rotational tiles (arrows)
      *			player will move in the direction of the arrow if the tile is hit
      *			player can use the mouse to change the direction of the tile
+     * l, r, u, d --> directional tiles (static)
+     *			same functionality as the tiles above, but the user cannot
+     *			change their orientation
      * F: finish (exit)
      */
 
@@ -182,23 +188,23 @@ public class LevelMaker {
             { 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'F', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T' },
             { 'X', 'X', 'r', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'd' },
             { 'd', 'X', 'X', 'X', 'X', 'l', 'r', 'X', 'u', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'r', 'X', 'd', 'X', 'X', 'X', 'X' },
-            { 'X', 'r', 'X', 'X', 'X', 'X', 'u', 'X', 'l', 'X', 'X', 'd', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'r', 'X', 'X', 'X', 'X', 'd', 'X' },
+            { 'X', 'r', 'X', 'X', 'X', 'X', 'X', 'X', 'l', 'X', 'X', 'd', 'X', 'X', 'X', 'l', 'X', 'X', 'X', 'X' },
             { 'X', 'X', 'u', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'G', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'u', 'X', 'X', 'X', 'X', 'X', 'X', 'l', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'u', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'l', 'X', 'X' },
             { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
             { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'd', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'l', 'X' },
             { 'X', 'r', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'd', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
             { 'X', 'X', 'X', 'X', 'X', 'u', 'X', 'X', 'X', 'X', 'X', 'X', 'l', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'r', 'X', 'X', 'O', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'l' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'r', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'd', 'X' },
+            { 'r', 'X', 'X', 'O', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'l', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'l' },
+            { 'X', 'X', 'X', 'X', 'X', 'X', 'd', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'l', 'X' },
             { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'r', 'X', 'X', 'X', 'X', 'X', 'X', 'd', 'X', 'X', 'X' },
             { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-            { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+            { 'X', 'X', 'u', 'X', 'X', 'X', 'G', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'u', 'X', 'X' },
             { 'r', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'u', 'u', 'X', 'X', 'l', 'X', 'X', 'X' },
-            { 'X', 'u', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X' }
+            { 'X', 'u', 'X', 'X', 'X', 'X', 'r', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'u', 'X', 'X', 'X', 'X' }
         };
         return level;
     }
