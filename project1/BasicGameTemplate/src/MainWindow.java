@@ -187,19 +187,24 @@ public class MainWindow {
                 }
                 resumeGame();
             } else if (e == quit) {
-                //if (gameIsPaused()) {
-                //    return;
-                //}
+                boolean wasPaused = true;
+                // if the game isn't paused, pause it
+                if (!gameIsPaused()) {
+                    pauseGame();
+                    wasPaused = false;
+                }
                 // quitting the game
-                pauseGame();
                 int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to quit? Any progress not saved will be lost.", "Quit Prompt", JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {
                     frame.setVisible(false);
                     System.exit(0);
                 } else {
-                    resumeGame();
+                    // if the game wasn't paused before, resume it
+                    if (!wasPaused) {
+                        resumeGame();
+                    }
                 }
-                pause.setText("Pause");
+                //pause.setText("Pause");
             } else if (e == chooseLevel) {
                 if (gameIsPaused()) {
                     return;
