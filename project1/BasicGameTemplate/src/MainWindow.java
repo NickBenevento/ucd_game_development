@@ -183,7 +183,7 @@ public class MainWindow {
                         saveGame();
                     }
                 } else {
-                    JOptionPane.showMessageDialog(null, "You can't save the game while sliding!", "Save Error!", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "You can't save the game while moving!", "Save Error!", JOptionPane.ERROR_MESSAGE);
                 }
                 resumeGame();
             } else if (e == quit) {
@@ -216,7 +216,7 @@ public class MainWindow {
 
         canvas.updateview();
 
-        int result = JOptionPane.showConfirmDialog(null, "Would you like to restart from the beginning? Your progress will be saved. (Choosing 'No' will close the game)", "End Game Prompt", JOptionPane.YES_NO_OPTION);
+        int result = JOptionPane.showConfirmDialog(null, "Would you like to restart from the beginning? Your progress will be saved.\n(Choosing 'No' will close the game)", "End Game Prompt", JOptionPane.YES_NO_OPTION);
         if (result == JOptionPane.YES_OPTION) {
             levelDisplayText = "Level " + (currentLevel + 1) + " completed!";
             currentLevel     = 0;
@@ -415,6 +415,12 @@ public class MainWindow {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (pause.getText().equals("Play")) {
+                        return;
+                    }
+                    if (gameworld.getDirection() != Model.Direction.STILL) {
+                        pauseGame();
+                        JOptionPane.showMessageDialog(null, "You can't load a level while moving!", "Level Error!", JOptionPane.ERROR_MESSAGE);
+                        resumeGame();
                         return;
                     }
                     // get the number of the button that was clicked and load that level
